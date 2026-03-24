@@ -1,0 +1,1303 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CSV Filtrage.io — Smart CSV Explorer</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Clash+Display:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg:#06080f;--surface:#0d1117;--surface2:#131920;
+  --border:#1c2535;--border2:#243040;
+  --accent:#4fffb0;--accent2:#00aaff;--accent3:#ff4d7e;
+  --text:#e2eaf5;--text2:#7a8fa8;--text3:#3d5068;
+  --radius:12px;--shadow:0 4px 24px rgba(0,0,0,.4);
+}
+body.light{
+  --bg:#f0f4fa;--surface:#fff;--surface2:#e8edf7;
+  --border:#cdd5e8;--border2:#b8c4d8;
+  --accent:#00875a;--accent2:#0066cc;--accent3:#cc1144;
+  --text:#0f1824;--text2:#2d4060;--text3:#6b80a0;
+  --shadow:0 4px 24px rgba(0,0,0,.12);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'JetBrains Mono',monospace;min-height:100vh;overflow-x:hidden;transition:background .3s,color .3s}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 60% 40% at 20% 20%,rgba(79,255,176,.04) 0%,transparent 70%),radial-gradient(ellipse 50% 60% at 80% 80%,rgba(0,170,255,.04) 0%,transparent 70%);pointer-events:none;z-index:0}
+body::after{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(28,37,53,.6) 1px,transparent 1px),linear-gradient(90deg,rgba(28,37,53,.6) 1px,transparent 1px);background-size:32px 32px;pointer-events:none;z-index:0;opacity:.3}
+body.light::after{background-image:linear-gradient(rgba(180,190,210,.4) 1px,transparent 1px),linear-gradient(90deg,rgba(180,190,210,.4) 1px,transparent 1px)}
+.app{position:relative;z-index:1;display:flex;flex-direction:column;min-height:100vh}
+
+/* ── TOPBAR ── */
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:0 28px;height:58px;border-bottom:1px solid var(--border);background:rgba(6,8,15,.88);backdrop-filter:blur(16px);position:sticky;top:0;z-index:200;gap:12px}
+body.light .topbar{background:rgba(240,244,250,.94)}
+.logo-text{font-family:'Clash Display',sans-serif;font-size:17px;font-weight:700;letter-spacing:-.5px;white-space:nowrap;cursor:pointer}
+.logo-text span{color:var(--accent)}
+.topbar-center{display:flex;align-items:center;gap:4px}
+.nav-btn{background:none;border:none;padding:6px 12px;border-radius:8px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text2);cursor:pointer;transition:all .2s;white-space:nowrap}
+.nav-btn:hover{background:var(--surface2);color:var(--text)}
+.nav-btn.active{background:var(--surface2);color:var(--accent);border:1px solid var(--border)}
+.topbar-right{display:flex;align-items:center;gap:8px;flex-wrap:nowrap}
+.btn-pro{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,#ffd700,#ffaa00);border:none;border-radius:8px;padding:7px 14px;color:#000;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;cursor:pointer;transition:all .2s;white-space:nowrap}
+.btn-pro:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(255,215,0,.35)}
+.btn-pro.active{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#000}
+.theme-btn{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:6px 10px;color:var(--text);font-size:14px;cursor:pointer;transition:border-color .2s;line-height:1}
+.theme-btn:hover{border-color:var(--accent)}
+.lang-select{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:6px 8px;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:11px;cursor:pointer;outline:none}
+.btn-newfile{display:none;align-items:center;gap:6px;background:var(--surface2);border:1px solid var(--border2);border-radius:8px;padding:6px 12px;color:var(--text2);font-family:'JetBrains Mono',monospace;font-size:11px;cursor:pointer;transition:all .2s;white-space:nowrap}
+.btn-newfile:hover{border-color:var(--accent);color:var(--accent)}
+.btn-newfile.show{display:flex}
+/* auth topbar buttons */
+.btn-signin{display:inline-flex;align-items:center;gap:6px;background:none;border:1px solid var(--border2);border-radius:8px;padding:6px 14px;color:var(--text2);font-family:'JetBrains Mono',monospace;font-size:11px;cursor:pointer;transition:all .2s}
+.btn-signin:hover{border-color:var(--accent);color:var(--accent)}
+.btn-user-nav{display:none;align-items:center;gap:8px;background:var(--surface2);border:1px solid var(--border2);border-radius:8px;padding:5px 12px;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:11px;cursor:pointer;transition:all .2s}
+.btn-user-nav:hover{border-color:var(--accent)}
+.btn-user-nav.show{display:flex}
+.u-avatar{width:22px;height:22px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;color:#000;font-size:10px;font-weight:700;flex-shrink:0}
+.btn-logout-nav{display:none;align-items:center;gap:5px;background:none;border:1px solid rgba(255,77,126,.25);border-radius:8px;padding:6px 12px;color:var(--accent3);font-family:'JetBrains Mono',monospace;font-size:11px;cursor:pointer;transition:all .2s}
+.btn-logout-nav:hover{background:rgba(255,77,126,.08);border-color:var(--accent3)}
+.btn-logout-nav.show{display:inline-flex}
+
+/* ── PAGES ── */
+.page{display:none}
+.page.active{display:block}
+
+/* ── MAIN / APP PAGE ── */
+.main{flex:1;padding:28px;max-width:1400px;margin:0 auto;width:100%}
+
+/* DROPZONE */
+.dropzone-wrap{display:flex;align-items:center;justify-content:center;min-height:calc(100vh - 120px)}
+.dropzone{border:2px dashed var(--border2);border-radius:20px;padding:64px 56px;text-align:center;cursor:pointer;transition:all .3s;background:var(--surface);max-width:560px;width:100%}
+.dropzone:hover,.dropzone.over{border-color:var(--accent);box-shadow:0 0 40px rgba(79,255,176,.07);transform:translateY(-2px)}
+.dz-icon{margin-bottom:16px;color:var(--accent);opacity:.8}
+.dz-title{font-family:'Clash Display',sans-serif;font-size:24px;font-weight:700;margin-bottom:8px}
+.dz-sub{font-size:12px;color:var(--text2);line-height:1.7;margin-bottom:24px}
+.dz-btn{display:inline-flex;align-items:center;gap:8px;background:transparent;border:2px solid var(--accent);border-radius:10px;padding:10px 26px;color:var(--accent);font-family:'Clash Display',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s}
+.dz-btn:hover{background:var(--accent);color:#000}
+body.light .dz-btn{border-color:#00875a;color:#00875a}
+body.light .dz-btn:hover{background:#00875a;color:#fff}
+.dz-formats{margin-top:16px;font-size:10px;color:var(--text3);letter-spacing:1px}
+input[type=file]{display:none}
+.workspace{display:none}
+.workspace.on{display:block}
+
+/* LIMIT BANNER */
+.limit-banner{display:none;align-items:center;justify-content:space-between;gap:12px;padding:10px 16px;background:rgba(255,215,0,.08);border:1px solid rgba(255,215,0,.25);border-radius:10px;margin-bottom:14px;font-size:12px;color:#ffcc00}
+.limit-banner.show{display:flex}
+.lb-btn{background:#ffd700;border:none;border-radius:6px;padding:5px 12px;color:#000;font-size:10px;font-weight:700;cursor:pointer;white-space:nowrap}
+
+/* FILE BAR */
+.file-bar{display:flex;align-items:center;gap:14px;padding:10px 18px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:16px;flex-wrap:wrap}
+.file-name{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:500;color:var(--accent)}
+.file-name span{color:var(--text3);font-size:11px}
+.file-stats{display:flex;gap:20px;margin-left:auto}
+.stat-item .val{font-size:16px;font-weight:500;display:block;line-height:1}
+.stat-item .lbl{font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:1px}
+
+/* FILTER BAR */
+.filter-bar{display:grid;grid-template-columns:1fr 1fr 1fr auto auto auto auto;gap:8px;margin-bottom:12px;align-items:end}
+.fg{display:flex;flex-direction:column;gap:4px}
+.fg label{font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:1px}
+.fi{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:12px;outline:none;transition:border-color .2s;width:100%}
+.fi:focus{border-color:var(--accent)}
+.fi::placeholder{color:var(--text3)}
+.toggle-wrap{display:flex;align-items:center;gap:7px;padding:8px 12px;background:var(--surface);border:1px solid var(--border);border-radius:8px;cursor:pointer;font-size:11px;color:var(--text2);transition:all .2s;white-space:nowrap;user-select:none}
+.toggle-wrap:hover{border-color:var(--accent);color:var(--accent)}
+.toggle-wrap input{accent-color:var(--accent)}
+.btn{display:flex;align-items:center;gap:5px;border:none;border-radius:8px;padding:8px 14px;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;cursor:pointer;transition:all .2s;white-space:nowrap}
+.btn-csv{background:rgba(79,255,176,.1);color:var(--accent);border:1px solid rgba(79,255,176,.2)}
+.btn-csv:hover{background:rgba(79,255,176,.2)}
+.btn-pdf{background:rgba(255,77,126,.1);color:var(--accent3);border:1px solid rgba(255,77,126,.2)}
+.btn-pdf:hover{background:rgba(255,77,126,.2)}
+body.light .btn-csv{color:#006644;border-color:rgba(0,102,68,.3);background:rgba(0,102,68,.08)}
+body.light .btn-pdf{color:#cc1144;border-color:rgba(204,17,68,.3);background:rgba(204,17,68,.08)}
+
+/* RESULTS */
+.results-info{display:flex;align-items:center;margin-bottom:8px;font-size:11px;color:var(--text2)}
+.results-info strong{color:var(--accent)}
+
+/* CHIPS */
+.active-filters{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+.chip{display:inline-flex;align-items:center;padding:3px 10px;background:rgba(79,255,176,.08);border:1px solid rgba(79,255,176,.2);border-radius:20px;font-size:10px;color:var(--accent);cursor:pointer}
+.chip:hover{background:rgba(255,77,126,.1);color:var(--accent3);border-color:rgba(255,77,126,.2)}
+
+/* COL PICKER */
+.col-wrap{position:relative}
+.btn-cols{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--text2);font-family:'JetBrains Mono',monospace;font-size:11px;cursor:pointer;transition:all .2s;white-space:nowrap}
+.btn-cols:hover{border-color:var(--accent2);color:var(--accent2)}
+.col-dropdown{display:none;position:absolute;top:calc(100% + 6px);right:0;background:var(--surface2);border:1px solid var(--border2);border-radius:10px;padding:8px;min-width:180px;z-index:50;box-shadow:var(--shadow)}
+.col-dropdown.open{display:block}
+.col-item{display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:6px;cursor:pointer;font-size:11px;color:var(--text2);transition:background .15s}
+.col-item:hover{background:var(--border);color:var(--text)}
+.col-item input{accent-color:var(--accent)}
+
+/* TABLE */
+.table-container{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.table-scroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:12px;min-width:600px}
+thead{background:#0a0f18;position:sticky;top:58px;z-index:10}
+body.light thead{background:#e4eaf5}
+th{padding:10px 14px;text-align:left;font-size:9px;text-transform:uppercase;letter-spacing:1.5px;color:var(--text3);border-bottom:1px solid var(--border);cursor:pointer;user-select:none;white-space:nowrap}
+th:hover{color:var(--text2)}
+th.sorted{color:var(--accent)}
+td{padding:9px 14px;border-bottom:1px solid rgba(28,37,53,.5);vertical-align:middle;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+body.light td{border-bottom:1px solid rgba(180,190,210,.5)}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(79,255,176,.02)}
+.tag{display:inline-block;padding:2px 8px;border-radius:20px;font-size:9px;text-transform:uppercase;white-space:nowrap}
+.tag-87-10A{background:rgba(79,255,176,.1);color:#4fffb0;border:1px solid rgba(79,255,176,.2)}
+.tag-87-10B{background:rgba(79,255,176,.07);color:#4fffb0;border:1px solid rgba(79,255,176,.15)}
+.tag-88-99B{background:rgba(255,165,0,.1);color:#ffaa44;border:1px solid rgba(255,165,0,.2)}
+.tag-87-20A{background:rgba(0,170,255,.1);color:#44bbff;border:1px solid rgba(0,170,255,.2)}
+.tag-88-10A{background:rgba(0,170,255,.07);color:#44bbff;border:1px solid rgba(0,170,255,.15)}
+.tag-other{background:rgba(255,255,255,.05);color:var(--text3);border:1px solid var(--border)}
+.td-email{font-size:11px;color:var(--accent);max-width:220px}
+.td-email a{color:inherit;text-decoration:none}
+.td-email a:hover{text-decoration:underline}
+.no-val{color:var(--text3);font-size:11px}
+.td-site a{color:var(--text3);font-size:10px;text-decoration:none;padding:2px 7px;border:1px solid var(--border);border-radius:5px;transition:all .2s}
+.td-site a:hover{color:var(--accent2);border-color:var(--accent2)}
+body.light .td-email{color:#006644}
+
+/* PAGINATION */
+.pagination{display:flex;align-items:center;justify-content:center;gap:5px;padding:14px;border-top:1px solid var(--border);flex-wrap:wrap}
+.pg-btn{background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:5px 10px;color:var(--text2);font-family:'JetBrains Mono',monospace;font-size:11px;cursor:pointer;transition:all .2s}
+.pg-btn:hover:not(:disabled),.pg-btn.active{border-color:var(--accent);color:var(--accent)}
+.pg-btn:disabled{opacity:.3;cursor:default}
+.pg-sep{color:var(--text3);font-size:11px;padding:0 2px}
+.empty-state{padding:50px 20px;text-align:center;color:var(--text3)}
+.empty-state p{font-size:12px;margin-top:10px}
+
+/* TOAST */
+.toast{position:fixed;bottom:22px;right:22px;background:var(--surface2);border:1px solid var(--border2);border-radius:10px;padding:12px 18px;font-size:12px;color:var(--text);box-shadow:var(--shadow);transform:translateY(80px);opacity:0;transition:all .3s cubic-bezier(.34,1.56,.64,1);z-index:999;max-width:320px}
+.toast.show{transform:translateY(0);opacity:1}
+.toast.success{border-color:rgba(79,255,176,.35)}
+.toast.error{border-color:rgba(255,77,126,.35)}
+
+/* ── PROFILE PAGE ── */
+.profile-page{flex:1;padding:48px 28px;max-width:760px;margin:0 auto;width:100%}
+.profile-hero{display:flex;align-items:center;gap:24px;margin-bottom:40px;padding:28px;background:var(--surface);border:1px solid var(--border);border-radius:20px}
+.profile-hero-avatar{width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-family:'Clash Display',sans-serif;font-size:28px;font-weight:700;color:#000;flex-shrink:0}
+.profile-hero-info h2{font-family:'Clash Display',sans-serif;font-size:20px;font-weight:700;margin-bottom:4px}
+.profile-hero-info p{font-size:12px;color:var(--text2)}
+.profile-hero-badge{margin-top:8px}
+.badge-pro{display:inline-flex;align-items:center;gap:5px;background:linear-gradient(135deg,#ffd700,#ffaa00);color:#000;font-weight:700;font-size:10px;padding:4px 12px;border-radius:20px}
+.badge-free{display:inline-flex;align-items:center;gap:5px;background:var(--surface2);color:var(--text2);font-size:10px;padding:4px 12px;border-radius:20px;border:1px solid var(--border)}
+.profile-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;margin-bottom:16px;overflow:hidden}
+body.light .profile-card{background:#fff}
+.profile-card-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.profile-card-header h3{font-family:'Clash Display',sans-serif;font-size:13px;font-weight:700;color:var(--text);letter-spacing:.3px}
+.profile-card-body{padding:4px 0}
+.profile-row{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--border);gap:12px}
+.profile-row:last-child{border-bottom:none}
+.profile-row-label{font-size:12px;color:var(--text2)}
+.profile-row-value{font-size:12px;color:var(--text);text-align:right}
+.profile-row-sub{font-size:10px;color:var(--text3);margin-top:2px}
+.btn-action{background:none;border:1px solid var(--border2);border-radius:8px;padding:6px 14px;font-family:'JetBrains Mono',monospace;font-size:11px;cursor:pointer;transition:all .2s;color:var(--text2);text-decoration:none;display:inline-block;white-space:nowrap}
+.btn-action:hover{border-color:var(--accent);color:var(--accent)}
+.btn-action.gold{background:linear-gradient(135deg,#ffd700,#ffaa00);border:none;color:#000;font-weight:700}
+.btn-action.gold:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(255,215,0,.3)}
+.btn-action.danger:hover{border-color:var(--accent3);color:var(--accent3)}
+.btn-action.red{background:rgba(255,77,126,.1);border-color:rgba(255,77,126,.3);color:var(--accent3)}
+.btn-action.red:hover{background:rgba(255,77,126,.2)}
+/* Inline form in profile */
+.inline-form{padding:14px 20px;border-bottom:1px solid var(--border);background:var(--surface2)}
+.inline-form:last-child{border-bottom:none}
+.inline-form input{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:9px 12px;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:12px;outline:none;margin-bottom:8px;transition:border-color .2s}
+.inline-form input:focus{border-color:var(--accent)}
+.inline-form input::placeholder{color:var(--text3)}
+.inline-form-row{display:flex;gap:8px}
+.btn-form-submit{flex:1;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;border-radius:8px;padding:9px;color:#000;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;cursor:pointer;transition:all .2s}
+.btn-form-submit:hover{transform:translateY(-1px)}
+.btn-form-submit:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.btn-form-cancel{background:none;border:1px solid var(--border2);border-radius:8px;padding:9px 14px;color:var(--text3);font-family:'JetBrains Mono',monospace;font-size:11px;cursor:pointer}
+.form-msg{font-size:11px;text-align:center;min-height:16px;margin-top:6px}
+.form-msg.error{color:var(--accent3)}
+.form-msg.success{color:var(--accent)}
+.profile-logout-btn{display:block;width:100%;background:none;border:1px solid rgba(255,77,126,.25);border-radius:12px;padding:12px;color:var(--accent3);font-family:'JetBrains Mono',monospace;font-size:12px;cursor:pointer;margin-top:24px;transition:all .2s;text-align:center}
+.profile-logout-btn:hover{background:rgba(255,77,126,.08);border-color:var(--accent3)}
+
+/* ── MODAL OVERLAY ── */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(8px);z-index:900;align-items:center;justify-content:center;padding:20px}
+.overlay.open{display:flex}
+.modal{background:var(--surface);border:1px solid var(--border2);border-radius:20px;padding:36px 32px;max-width:460px;width:100%;position:relative;box-shadow:0 20px 60px rgba(0,0,0,.5);max-height:90vh;overflow-y:auto}
+body.light .modal{background:#fff}
+.modal-close{position:absolute;top:14px;right:14px;background:none;border:none;color:var(--text3);font-size:18px;cursor:pointer;padding:4px 8px;border-radius:6px;transition:background .2s;line-height:1}
+.modal-close:hover{background:var(--border);color:var(--text)}
+
+/* AUTH MODAL */
+.auth-tabs{display:flex;background:var(--surface2);border-radius:10px;padding:3px;margin-bottom:20px}
+.auth-tab{flex:1;background:none;border:none;border-radius:8px;padding:8px;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;color:var(--text2);cursor:pointer;transition:all .2s}
+.auth-tab.active{background:var(--surface);color:var(--text);box-shadow:0 1px 4px rgba(0,0,0,.2)}
+.auth-field{display:flex;flex-direction:column;gap:5px;margin-bottom:12px}
+.auth-field label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px}
+.auth-input{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:12px;outline:none;transition:border-color .2s;width:100%}
+.auth-input:focus{border-color:var(--accent)}
+.auth-input::placeholder{color:var(--text3)}
+.btn-auth{display:block;width:100%;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;border-radius:10px;padding:12px;color:#000;font-family:'Clash Display',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s;margin-top:6px;margin-bottom:8px}
+.btn-auth:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(79,255,176,.25)}
+.btn-auth:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.auth-divider{display:flex;align-items:center;gap:10px;margin:10px 0;font-size:10px;color:var(--text3);letter-spacing:1px}
+.auth-divider::before,.auth-divider::after{content:'';flex:1;height:1px;background:var(--border)}
+.btn-google{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;background:var(--surface2);border:1px solid var(--border2);border-radius:10px;padding:11px;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:12px;cursor:pointer;transition:all .2s;margin-bottom:4px}
+.btn-google:hover{border-color:#4285F4;background:rgba(66,133,244,.06)}
+.auth-msg{font-size:11px;text-align:center;min-height:16px;margin-top:6px}
+.auth-msg.error{color:var(--accent3)}
+.auth-msg.success{color:var(--accent)}
+
+/* PRO MODAL */
+.pro-modal-title{font-family:'Clash Display',sans-serif;font-size:24px;font-weight:700;text-align:center;margin-bottom:4px}
+.pro-modal-title span{color:#ffd700}
+.pro-sub{text-align:center;color:var(--text2);font-size:13px;margin-bottom:14px}
+.pro-price{text-align:center;font-family:'Clash Display',sans-serif;font-size:34px;font-weight:700;color:var(--accent);margin-bottom:18px}
+.pro-price span{font-size:13px;color:var(--text2);font-family:'JetBrains Mono',monospace}
+.pro-features{list-style:none;margin-bottom:20px}
+.pro-features li{display:flex;align-items:center;gap:10px;padding:8px 0;font-size:12px;color:var(--text2);border-bottom:1px solid var(--border)}
+.pro-features li:last-child{border-bottom:none}
+.pro-features li::before{content:'✓';color:var(--accent);font-weight:700;flex-shrink:0}
+/* Step dans le modal pro */
+.pro-step{display:none}
+.pro-step.active{display:block}
+.pro-user-bar{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;margin-bottom:12px}
+.pro-user-bar .email{font-size:11px;color:var(--text);flex:1}
+.pro-user-bar .change-btn{background:none;border:none;color:var(--text3);font-size:10px;font-family:'JetBrains Mono',monospace;cursor:pointer;transition:color .2s}
+.pro-user-bar .change-btn:hover{color:var(--accent3)}
+.btn-checkout{display:block;width:100%;background:linear-gradient(135deg,#ffd700,#ffaa00);border:none;border-radius:10px;padding:14px;color:#000;font-family:'Clash Display',sans-serif;font-size:15px;font-weight:700;cursor:pointer;text-decoration:none;text-align:center;transition:all .2s;margin-bottom:4px}
+.btn-checkout:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(255,215,0,.4)}
+.pro-checkout-note{font-size:10px;color:var(--text3);text-align:center;margin-bottom:16px}
+/* License section */
+.license-section{border-top:1px solid var(--border);padding-top:16px;margin-top:4px}
+.license-section p{font-size:11px;color:var(--text3);margin-bottom:8px;text-align:center}
+.license-row{display:flex;gap:8px}
+.license-input{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:11px;outline:none;transition:border-color .2s}
+.license-input:focus{border-color:var(--accent)}
+.btn-activate{background:#fff;border:1.5px solid var(--accent);border-radius:8px;padding:8px 14px;color:#00875a;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;cursor:pointer;transition:all .2s;white-space:nowrap}
+.btn-activate:hover{background:var(--accent);color:#000}
+#licMsg{font-size:11px;margin-top:7px;text-align:center;min-height:16px}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  .filter-bar{grid-template-columns:1fr 1fr}
+  .topbar{padding:0 14px}
+  .main,.profile-page{padding:14px}
+  .topbar-center{display:none}
+  .profile-hero{flex-direction:column;text-align:center}
+}
+@media(max-width:600px){
+  .filter-bar{grid-template-columns:1fr}
+  .file-stats{display:none}
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- ══ TOPBAR ══ -->
+<div class="topbar">
+  <div class="logo-text" onclick="showPage('app')">CSV Filtrage<span>.io</span></div>
+
+  <!-- Navigation centre (visible quand connecté) -->
+  <div class="topbar-center" id="navCenter" style="display:none">
+    <button class="nav-btn active" id="navApp" onclick="showPage('app')">Application</button>
+    <button class="nav-btn" id="navProfile" onclick="showPage('profile')">Mon profil</button>
+  </div>
+
+  <div class="topbar-right">
+    <button class="btn-pro" id="btnPro" onclick="openPro()">Pro 4,99€/mois</button>
+    <button class="btn-newfile" id="btnNewFile" onclick="resetApp()">↺ <span id="newFileTxt">Nouveau fichier</span></button>
+    <button class="theme-btn" id="themeBtn" onclick="toggleTheme()">🌙</button>
+    <select class="lang-select" id="langSelect" onchange="setLang(this.value)">
+      <option value="fr">FR</option>
+      <option value="en">EN</option>
+      <option value="es">ES</option>
+      <option value="zh">ZH</option>
+    </select>
+    <!-- Non connecté -->
+    <button class="btn-signin" id="btnSignIn" onclick="openAuth('login')">Connexion</button>
+    <!-- Connecté -->
+    <button class="btn-user-nav" id="btnUserNav" onclick="showPage('profile')">
+      <div class="u-avatar" id="navAvatar">?</div>
+      <span id="navEmail">Mon compte</span>
+    </button>
+    <button class="btn-logout-nav" id="btnLogout" onclick="handleSignOut()">→ Déconnexion</button>
+  </div>
+</div>
+
+<!-- ══ PAGE APP ══ -->
+<div class="page active" id="pageApp">
+  <div class="main">
+
+    <!-- DROPZONE -->
+    <div class="dropzone-wrap" id="dzWrap">
+      <div class="dropzone" id="dropzone">
+        <div class="dz-icon">
+          <svg width="52" height="52" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="6" y="4" width="28" height="36" rx="3" stroke="currentColor" stroke-width="1.8" fill="none" opacity=".5"/>
+            <line x1="12" y1="14" x2="28" y2="14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            <line x1="12" y1="20" x2="28" y2="20" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            <line x1="12" y1="26" x2="22" y2="26" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            <path d="M36 28v18M29 34l7-7 7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="dz-title" id="dzTitle">Importe ton fichier CSV</div>
+        <p class="dz-sub" id="dzSub">Glisse ton fichier ici ou clique pour parcourir.<br>Fonctionne avec n'importe quel fichier CSV.</p>
+        <button class="dz-btn" onclick="event.stopPropagation();document.getElementById('fileInput').click()">
+          ↑ <span id="dzBtn">Choisir un fichier</span>
+        </button>
+        <p class="dz-formats" id="dzFormats">FORMAT ACCEPTÉ · CSV (UTF-8)</p>
+        <input type="file" id="fileInput" accept=".csv">
+      </div>
+    </div>
+
+    <!-- WORKSPACE -->
+    <div class="workspace" id="workspace">
+      <div class="limit-banner" id="limitBanner">
+        <span id="limitText">Version gratuite — limité à 200 lignes.</span>
+        <button class="lb-btn" id="limitBtn" onclick="openPro()">Passer Pro</button>
+      </div>
+      <div class="file-bar">
+        <div class="file-name">
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none" style="flex-shrink:0;opacity:.6"><rect x="2" y="1" width="8" height="11" rx="1" stroke="currentColor" stroke-width="1.2" fill="none"/><line x1="4" y1="4" x2="9" y2="4" stroke="currentColor" stroke-width="1" stroke-linecap="round"/><line x1="4" y1="6.5" x2="9" y2="6.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/><line x1="4" y1="9" x2="7" y2="9" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg>
+          <strong id="fileName">—</strong><span id="fileSize"></span>
+        </div>
+        <div class="file-stats">
+          <div class="stat-item"><strong class="val" id="statTotal">0</strong><span class="lbl" id="statRowsLbl">Total</span></div>
+          <div class="stat-item"><strong class="val" id="statFiltered">0</strong><span class="lbl" id="statFilteredLbl">Filtrées</span></div>
+          <div class="stat-item"><strong class="val" id="statCols">0</strong><span class="lbl" id="statColsLbl">Colonnes</span></div>
+        </div>
+      </div>
+      <div class="filter-bar">
+        <div class="fg"><label id="searchLbl">Recherche globale</label><input type="text" class="fi" id="globalSearch" placeholder="Toutes les colonnes…"></div>
+        <div class="fg"><label id="cityLbl">Ville(s)</label><input type="text" class="fi" id="citySearch" placeholder="Lille, Paris…"></div>
+        <div class="fg"><label id="col3Lbl">Colonne 3</label><input type="text" class="fi" id="col3Search" placeholder="—"></div>
+        <label class="toggle-wrap"><input type="checkbox" id="emailOnly"><span id="emailOnlyLbl">Avec email</span></label>
+        <button class="btn btn-csv" id="btnCSV">↓ <span id="exportCSVLbl">CSV</span></button>
+        <button class="btn btn-pdf" id="btnPDF">↓ <span id="exportPDFLbl">PDF</span></button>
+        <div class="col-wrap">
+          <button class="btn-cols" onclick="toggleCols()" id="colPickerBtn">Colonnes</button>
+          <div class="col-dropdown" id="colDropdown"></div>
+        </div>
+      </div>
+      <div class="active-filters" id="chips"></div>
+      <div class="results-info"><div id="resultsCount"></div></div>
+      <div class="table-container">
+        <div class="table-scroll"><table><thead id="tHead"></thead><tbody id="tBody"></tbody></table></div>
+        <div class="pagination" id="pagination"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══ PAGE PROFIL ══ -->
+<div class="page" id="pageProfile">
+  <div class="profile-page">
+
+    <!-- Hero -->
+    <div class="profile-hero">
+      <div class="profile-hero-avatar" id="phAvatar">?</div>
+      <div class="profile-hero-info">
+        <h2 id="phName">—</h2>
+        <p id="phEmail">—</p>
+        <div class="profile-hero-badge" id="phBadge"><span class="badge-free">Plan gratuit</span></div>
+      </div>
+    </div>
+
+    <!-- Abonnement -->
+    <div class="profile-card">
+      <div class="profile-card-header">
+        <h3>Abonnement</h3>
+      </div>
+      <div class="profile-card-body">
+        <!-- Gratuit -->
+        <div class="profile-row" id="prRowFree">
+          <div><div class="profile-row-label">Plan actuel</div><div class="profile-row-sub">Limité à 200 lignes par fichier</div></div>
+          <button class="btn-action gold" onclick="openPro()">Passer Pro →</button>
+        </div>
+        <!-- Pro actif -->
+        <div class="profile-row" id="prRowPro" style="display:none">
+          <div><div class="profile-row-label">Pro actif</div><div class="profile-row-sub" id="prExpiry">—</div></div>
+          <span style="color:var(--accent);font-size:20px">✓</span>
+        </div>
+        <!-- Expiré -->
+        <div class="profile-row" id="prRowExpired" style="display:none">
+          <div><div class="profile-row-label" style="color:#ffaa44">Accès expiré</div><div class="profile-row-sub">Entrez votre nouvelle clé mensuelle</div></div>
+          <button class="btn-action" onclick="toggleRenewForm()" style="border-color:rgba(255,170,68,.4);color:#ffaa44">Renouveler</button>
+        </div>
+        <!-- Formulaire renouvellement -->
+        <div class="inline-form" id="renewFormContainer" style="display:none">
+          <input type="text" id="renewKey" placeholder="XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX">
+          <div class="inline-form-row">
+            <button class="btn-form-submit" onclick="renewLicense()">Activer la clé</button>
+            <button class="btn-form-cancel" onclick="toggleRenewForm()">Annuler</button>
+          </div>
+          <div class="form-msg" id="renewMsg"></div>
+        </div>
+        <!-- Résiliation -->
+        <div class="profile-row" id="prRowCancel" style="display:none">
+          <div><div class="profile-row-label">Résilier l'abonnement</div><div class="profile-row-sub">Gérez votre abonnement sur LemonSqueezy</div></div>
+          <a class="btn-action danger" href="https://app.lemonsqueezy.com/my-orders" target="_blank">Gérer →</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sécurité -->
+    <div class="profile-card">
+      <div class="profile-card-header">
+        <h3>Sécurité</h3>
+        <button class="btn-action" id="pwdToggleBtn" onclick="togglePwdForm()">Changer le mot de passe</button>
+      </div>
+      <div id="pwdFormContainer" style="display:none">
+        <div class="inline-form">
+          <input type="password" id="newPwd" placeholder="Nouveau mot de passe (min. 6 caractères)" autocomplete="new-password">
+          <input type="password" id="confirmPwd" placeholder="Confirmer le mot de passe" autocomplete="new-password">
+          <div class="inline-form-row">
+            <button class="btn-form-submit" id="pwdSubmitBtn" onclick="changePassword()">Mettre à jour</button>
+            <button class="btn-form-cancel" onclick="togglePwdForm()">Annuler</button>
+          </div>
+          <div class="form-msg" id="pwdMsg"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Support -->
+    <div class="profile-card">
+      <div class="profile-card-header"><h3>Support</h3></div>
+      <div class="profile-card-body">
+        <div class="profile-row">
+          <div><div class="profile-row-label">Contacter l'équipe</div><div class="profile-row-sub">arthurbusi.contact@gmail.com</div></div>
+          <a class="btn-action" href="mailto:arthurbusi.contact@gmail.com">Écrire →</a>
+        </div>
+        <div class="profile-row">
+          <div><div class="profile-row-label">Documentation</div><div class="profile-row-sub">Guides et tutoriels</div></div>
+          <a class="btn-action" href="mailto:arthurbusi.contact@gmail.com">Aide →</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Déconnexion -->
+    <button class="profile-logout-btn" onclick="handleSignOut()">→ Se déconnecter</button>
+
+  </div>
+</div>
+
+</div><!-- /app -->
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- ══ AUTH MODAL ══ -->
+<div class="overlay" id="authOverlay" onclick="if(event.target===this)closeAuth()">
+  <div class="modal" style="max-width:420px">
+    <button class="modal-close" onclick="closeAuth()">✕</button>
+    <h2 style="font-family:'Clash Display',sans-serif;font-size:22px;font-weight:700;text-align:center;margin-bottom:4px">CSV Filtrage<span style="color:var(--accent)">.io</span></h2>
+    <p style="text-align:center;font-size:12px;color:var(--text2);margin-bottom:18px" id="authSubtitle">Bienvenue</p>
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="tabLogin" onclick="switchTab('login')">Connexion</button>
+      <button class="auth-tab" id="tabRegister" onclick="switchTab('register')">Créer un compte</button>
+    </div>
+    <button class="btn-google" onclick="signInWithGoogle()">
+      <svg width="16" height="16" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+      Continuer avec Google
+    </button>
+    <div class="auth-divider">OU</div>
+    <div class="auth-field"><label>Email</label><input type="email" class="auth-input" id="authEmail" placeholder="vous@example.com" autocomplete="email"></div>
+    <div class="auth-field"><label>Mot de passe</label><input type="password" class="auth-input" id="authPassword" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')handleAuthSubmit()"></div>
+    <div class="auth-field" id="fieldConfirm" style="display:none"><label>Confirmer le mot de passe</label><input type="password" class="auth-input" id="authConfirm" placeholder="••••••••" autocomplete="new-password"></div>
+    <button class="btn-auth" id="btnAuthSubmit" onclick="handleAuthSubmit()">Se connecter</button>
+    <div class="auth-msg" id="authMsg"></div>
+  </div>
+</div>
+
+<!-- ══ PRO MODAL ══ -->
+<div class="overlay" id="proOverlay" onclick="if(event.target===this)closePro()">
+  <div class="modal">
+    <button class="modal-close" onclick="closePro()">✕</button>
+    <div class="pro-modal-title">CSV Filtrage<span>.io Pro</span></div>
+    <p class="pro-sub" id="proSub">Débloquez toutes les fonctionnalités</p>
+    <div class="pro-price" id="proPrice">4,99€ <span id="proPerMonth">/ mois</span></div>
+    <ul class="pro-features">
+      <li id="f1">Import CSV illimité (sans limite de lignes)</li>
+      <li id="f2">Export PDF professionnel</li>
+      <li id="f3">Export CSV complet avec tous les champs</li>
+      <li id="f4">Filtres avancés multi-colonnes</li>
+      <li id="f5">Sélecteur de colonnes</li>
+      <li id="f6">Annulation à tout moment</li>
+    </ul>
+
+    <!-- Étape 1 : pas connecté -->
+    <div class="pro-step active" id="proStepAuth">
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:18px;margin-bottom:12px">
+        <p style="font-size:11px;color:var(--text2);text-align:center;margin-bottom:14px">Connectez-vous pour finaliser l'abonnement</p>
+        <button class="btn-google" onclick="signInWithGoogle()" style="margin-bottom:10px">
+          <svg width="15" height="15" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+          Continuer avec Google
+        </button>
+        <div class="auth-divider">OU EMAIL</div>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-top:10px">
+          <input type="email" class="auth-input" id="proEmail" placeholder="votre@email.com" autocomplete="email">
+          <input type="password" class="auth-input" id="proPassword" placeholder="Mot de passe" autocomplete="current-password">
+          <div style="display:flex;gap:8px">
+            <button onclick="proSignIn()" class="btn-form-cancel" style="flex:1;padding:9px">Connexion</button>
+            <button onclick="proSignUp()" class="btn-form-submit" style="flex:1">Créer un compte</button>
+          </div>
+        </div>
+        <div class="auth-msg" id="proAuthMsg"></div>
+      </div>
+    </div>
+
+    <!-- Étape 2 : connecté → bouton LemonSqueezy -->
+    <div class="pro-step" id="proStepCheckout">
+      <div class="pro-user-bar">
+        <div class="u-avatar" id="proAvatar">?</div>
+        <span class="email" id="proUserEmail">—</span>
+        <button class="change-btn" onclick="handleSignOut()">Déconnexion</button>
+      </div>
+      <a id="btnLemon" href="https://csvfilter-site.lemonsqueezy.com/checkout/buy/7348520a-5b46-4168-abde-4705fbeaa93d" target="_blank" class="btn-checkout" id="checkoutBtn">S'abonner maintenant — 4,99€/mois</a>
+      <p class="pro-checkout-note">Paiement sécurisé · Annulation à tout moment</p>
+    </div>
+
+    <div class="license-section">
+      <p id="licenseLabel">Déjà abonné ? Entrez votre clé de licence reçue par email</p>
+      <div class="license-row">
+        <input type="text" class="license-input" id="licKey" placeholder="XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX">
+        <button class="btn-activate" id="activateBtn" onclick="activateLicense()">Activer</button>
+      </div>
+      <div id="licMsg"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════
+// I18N
+// ══════════════════════════════════════════════════
+const T = {
+  fr:{
+    dzTitle:'Importe ton fichier CSV',dzSub:'Glisse ton fichier ici ou clique pour parcourir.\nFonctionne avec n\'importe quel fichier CSV.',
+    dzBtn:'Choisir un fichier',dzFormats:'FORMAT ACCEPTÉ · CSV (UTF-8)',newFile:'Nouveau fichier',
+    statRows:'Total',statFiltered:'Filtrées',statCols:'Colonnes',
+    searchLbl:'Recherche globale',searchPh:'Toutes les colonnes…',
+    cityLbl:'Ville(s)',cityPh:'Lille, Paris, Lyon…',col3Lbl:'Colonne 3',
+    emailOnly:'Avec email',exportCSV:'CSV',exportPDF:'PDF',colPicker:'Colonnes',
+    results:(n,t)=>`${n} résultat${n>1?'s':''} sur ${t}`,noResults:'Aucun résultat.',
+    pdfTitle:'Export CSV Filtrage.io',toastCSV:'CSV exporté',toastPDF:'PDF généré',
+    toastLoaded:(n)=>`${n} lignes chargées`,
+    proBtn:'Pro 4,99€/mois',proActive:'Pro actif',
+    proSub:'Débloquez toutes les fonctionnalités',proPrice:'4,99€',proPerMonth:'/ mois',
+    f1:'Import CSV illimité (sans limite de lignes)',f2:'Export PDF professionnel',
+    f3:'Export CSV complet avec tous les champs',f4:'Filtres avancés multi-colonnes',
+    f5:'Sélecteur de colonnes',f6:'Annulation à tout moment',
+    checkout:'S\'abonner maintenant',
+    licenseLabel:'Déjà abonné ? Entrez votre clé reçue par email',
+    licensePh:'XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX',activate:'Activer',
+    activated:'Licence activée ! Accès Pro débloqué pour 31 jours.',invalid:'Clé invalide ou expirée.',
+    verifying:'Vérification…',enterKey:'Entrez votre clé de licence.',
+    limitText:(n,m)=>`Version gratuite — ${n} lignes détectées, ${m} affichées.`,
+    limitBtn:'Passer Pro',
+    loginBtn:'Connexion',createBtn:'Créer un compte',
+  },
+  en:{
+    dzTitle:'Import your CSV file',dzSub:'Drag & drop here or click to browse.\nWorks with any CSV file.',
+    dzBtn:'Choose a file',dzFormats:'ACCEPTED FORMAT · CSV (UTF-8)',newFile:'New file',
+    statRows:'Total',statFiltered:'Filtered',statCols:'Columns',
+    searchLbl:'Global search',searchPh:'Search all columns…',
+    cityLbl:'City / Cities',cityPh:'London, Paris, NYC…',col3Lbl:'Column 3',
+    emailOnly:'With email',exportCSV:'CSV',exportPDF:'PDF',colPicker:'Columns',
+    results:(n,t)=>`${n} result${n>1?'s':''} of ${t}`,noResults:'No results found.',
+    pdfTitle:'CSV Filtrage.io Export',toastCSV:'CSV exported',toastPDF:'PDF generated',
+    toastLoaded:(n)=>`${n} rows loaded`,
+    proBtn:'Pro 4.99€/mo',proActive:'Pro active',
+    proSub:'Unlock all features',proPrice:'4.99€',proPerMonth:'/ month',
+    f1:'Unlimited CSV import',f2:'Professional PDF export',
+    f3:'Full CSV export with all fields',f4:'Advanced multi-column filters',
+    f5:'Column selector',f6:'Cancel anytime',
+    checkout:'Subscribe now',
+    licenseLabel:'Already subscribed? Enter your license key',
+    licensePh:'XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX',activate:'Activate',
+    activated:'License activated! Pro access unlocked for 31 days.',invalid:'Invalid or expired key.',
+    verifying:'Verifying…',enterKey:'Enter your license key.',
+    limitText:(n,m)=>`Free plan — ${n} rows detected, showing ${m}.`,
+    limitBtn:'Upgrade to Pro',
+    loginBtn:'Sign in',createBtn:'Create account',
+  },
+  es:{
+    dzTitle:'Importa tu archivo CSV',dzSub:'Arrastra aquí o haz clic para buscar.\nFunciona con cualquier CSV.',
+    dzBtn:'Elegir archivo',dzFormats:'FORMATO ACEPTADO · CSV (UTF-8)',newFile:'Nuevo archivo',
+    statRows:'Total',statFiltered:'Filtradas',statCols:'Columnas',
+    searchLbl:'Búsqueda global',searchPh:'Buscar en todas las columnas…',
+    cityLbl:'Ciudad(es)',cityPh:'Madrid, Barcelona…',col3Lbl:'Columna 3',
+    emailOnly:'Con email',exportCSV:'CSV',exportPDF:'PDF',colPicker:'Columnas',
+    results:(n,t)=>`${n} resultado${n>1?'s':''} de ${t}`,noResults:'Sin resultados.',
+    pdfTitle:'Exportación CSV Filtrage.io',toastCSV:'CSV exportado',toastPDF:'PDF generado',
+    toastLoaded:(n)=>`${n} filas cargadas`,
+    proBtn:'Pro 4,99€/mes',proActive:'Pro activo',
+    proSub:'Desbloquea todas las funciones',proPrice:'4,99€',proPerMonth:'/ mes',
+    f1:'Importación CSV ilimitada',f2:'Exportación PDF profesional',
+    f3:'Exportación CSV completa',f4:'Filtros avanzados multi-columna',
+    f5:'Selector de columnas',f6:'Cancela cuando quieras',
+    checkout:'Suscribirse ahora',
+    licenseLabel:'¿Ya suscrito? Introduce tu clave de licencia',
+    licensePh:'XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX',activate:'Activar',
+    activated:'¡Licencia activada! Acceso Pro desbloqueado 31 días.',invalid:'Clave inválida o expirada.',
+    verifying:'Verificando…',enterKey:'Introduce tu clave de licencia.',
+    limitText:(n,m)=>`Plan gratuito — ${n} filas detectadas, mostrando ${m}.`,
+    limitBtn:'Pasar a Pro',
+    loginBtn:'Iniciar sesión',createBtn:'Crear cuenta',
+  },
+  zh:{
+    dzTitle:'导入您的 CSV 文件',dzSub:'拖放文件到此处或点击浏览。\n支持任何 CSV 文件。',
+    dzBtn:'选择文件',dzFormats:'支持格式 · CSV (UTF-8)',newFile:'新文件',
+    statRows:'总行数',statFiltered:'已筛选',statCols:'列数',
+    searchLbl:'全局搜索',searchPh:'搜索所有列…',
+    cityLbl:'城市',cityPh:'北京, 上海…',col3Lbl:'第3列',
+    emailOnly:'含邮箱',exportCSV:'CSV',exportPDF:'PDF',colPicker:'列设置',
+    results:(n,t)=>`共 ${t} 条，显示 ${n} 条`,noResults:'未找到结果。',
+    pdfTitle:'CSV Filtrage.io 导出',toastCSV:'CSV 已导出',toastPDF:'PDF 已生成',
+    toastLoaded:(n)=>`已加载 ${n} 行`,
+    proBtn:'Pro 4.99€/月',proActive:'Pro 已激活',
+    proSub:'解锁所有功能',proPrice:'4.99€',proPerMonth:'/ 月',
+    f1:'无限制 CSV 导入',f2:'专业 PDF 导出',
+    f3:'完整 CSV 导出',f4:'多列高级筛选',
+    f5:'列选择器',f6:'随时取消',
+    checkout:'立即订阅',
+    licenseLabel:'已订阅？请输入许可证密钥',
+    licensePh:'XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX',activate:'激活',
+    activated:'许可证已激活！Pro 权限已解锁 31 天。',invalid:'许可证密钥无效或已过期。',
+    verifying:'验证中…',enterKey:'请输入许可证密钥。',
+    limitText:(n,m)=>`免费版 — 检测到 ${n} 行，显示 ${m} 行。`,
+    limitBtn:'升级到 Pro',
+    loginBtn:'登录',createBtn:'创建账户',
+  }
+};
+
+let lang='fr';
+const FREE_LIMIT=200;
+function tr(k,...a){const v=T[lang][k];return typeof v==='function'?v(...a):(v||k);}
+
+function setLang(l){
+  lang=l;
+  document.getElementById('dzTitle').textContent=tr('dzTitle');
+  document.getElementById('dzSub').innerHTML=tr('dzSub').replace('\n','<br>');
+  document.getElementById('dzBtn').textContent=tr('dzBtn');
+  document.getElementById('dzFormats').textContent=tr('dzFormats');
+  document.getElementById('newFileTxt').textContent=tr('newFile');
+  document.getElementById('statRowsLbl').textContent=tr('statRows');
+  document.getElementById('statFilteredLbl').textContent=tr('statFiltered');
+  document.getElementById('statColsLbl').textContent=tr('statCols');
+  document.getElementById('searchLbl').textContent=tr('searchLbl');
+  document.getElementById('globalSearch').placeholder=tr('searchPh');
+  document.getElementById('cityLbl').textContent=tr('cityLbl');
+  document.getElementById('citySearch').placeholder=tr('cityPh');
+  document.getElementById('col3Lbl').textContent=tr('col3Lbl');
+  document.getElementById('emailOnlyLbl').textContent=tr('emailOnly');
+  document.getElementById('exportCSVLbl').textContent=tr('exportCSV');
+  document.getElementById('exportPDFLbl').textContent=tr('exportPDF');
+  document.getElementById('colPickerBtn').textContent=tr('colPicker');
+  document.getElementById('proSub').textContent=tr('proSub');
+  document.getElementById('proPrice').innerHTML=tr('proPrice')+' <span id="proPerMonth">'+tr('proPerMonth')+'</span>';
+  ['f1','f2','f3','f4','f5','f6'].forEach(id=>document.getElementById(id).textContent=tr(id));
+  document.getElementById('licenseLabel').textContent=tr('licenseLabel');
+  document.getElementById('licKey').placeholder=tr('licensePh');
+  document.getElementById('activateBtn').textContent=tr('activate');
+  document.getElementById('limitBtn').textContent=tr('limitBtn');
+  document.getElementById('tabLogin').textContent=tr('loginBtn');
+  document.getElementById('tabRegister').textContent=tr('createBtn');
+  if(document.getElementById('limitBanner').classList.contains('show')&&allRows.length)
+    document.getElementById('limitText').textContent=tr('limitText',allRows.length,FREE_LIMIT);
+  updateProBtn();
+  if(allRows.length)updateInfo();
+}
+
+// ══════════════════════════════════════════════════
+// THEME
+// ══════════════════════════════════════════════════
+function toggleTheme(){
+  const light=document.body.classList.toggle('light');
+  document.getElementById('themeBtn').textContent=light?'🌑':'🌙';
+  localStorage.setItem('fio-theme',light?'light':'dark');
+}
+if(localStorage.getItem('fio-theme')==='light'){
+  document.body.classList.add('light');
+  document.getElementById('themeBtn').textContent='🌑';
+}
+
+// ══════════════════════════════════════════════════
+// PAGE NAVIGATION
+// ══════════════════════════════════════════════════
+function showPage(name){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page'+name.charAt(0).toUpperCase()+name.slice(1)).classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  const nb=document.getElementById('nav'+name.charAt(0).toUpperCase()+name.slice(1));
+  if(nb)nb.classList.add('active');
+  if(name==='profile')refreshProfilePage();
+}
+
+// ══════════════════════════════════════════════════
+// PRO SYSTEM
+// ══════════════════════════════════════════════════
+let isPro=localStorage.getItem('fio-pro')==='true';
+
+function checkProExpiry(){
+  if(!isPro)return;
+  const exp=parseInt(localStorage.getItem('fio-pro-expiry')||'0');
+  if(exp&&Date.now()>exp){
+    isPro=false;
+    localStorage.removeItem('fio-pro');
+    localStorage.removeItem('fio-pro-expiry');
+    localStorage.removeItem('fio-key');
+    updateProBtn();
+    if(allRows.length)applyFilters();
+  }
+}
+checkProExpiry();
+
+function updateProBtn(){
+  const btn=document.getElementById('btnPro');
+  if(isPro){btn.textContent='✓ '+tr('proActive');btn.style.background='linear-gradient(135deg,var(--accent),var(--accent2))';btn.classList.add('active');}
+  else{btn.textContent=tr('proBtn');btn.style.background='';btn.classList.remove('active');}
+}
+updateProBtn();
+
+function openPro(){
+  document.getElementById('proOverlay').classList.add('open');
+  syncProModal();
+}
+function closePro(){document.getElementById('proOverlay').classList.remove('open');}
+
+function syncProModal(){
+  const stepAuth=document.getElementById('proStepAuth');
+  const stepCheckout=document.getElementById('proStepCheckout');
+  if(currentUser){
+    stepAuth.classList.remove('active');
+    stepCheckout.classList.add('active');
+    document.getElementById('proAvatar').textContent=(currentUser.email||'?')[0].toUpperCase();
+    document.getElementById('proUserEmail').textContent=currentUser.email||'';
+    // Ajouter email dans l'URL LemonSqueezy pour pré-remplir
+    const base='https://csvfilter-site.lemonsqueezy.com/checkout/buy/7348520a-5b46-4168-abde-4705fbeaa93d';
+    const url=currentUser.email?base+'?checkout[email]='+encodeURIComponent(currentUser.email):base;
+    document.getElementById('btnLemon').href=url;
+  } else {
+    stepAuth.classList.add('active');
+    stepCheckout.classList.remove('active');
+    document.getElementById('proAuthMsg').textContent='';
+  }
+}
+
+async function activateLicense(){
+  const key=document.getElementById('licKey').value.trim();
+  const msg=document.getElementById('licMsg');
+  if(!key){msg.textContent=tr('enterKey');msg.style.color='var(--accent3)';return;}
+  msg.textContent=tr('verifying');msg.style.color='var(--text2)';
+  const isUUID=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(key);
+  if(isUUID){
+    const expiry=Date.now()+31*24*60*60*1000;
+    isPro=true;
+    localStorage.setItem('fio-pro','true');
+    localStorage.setItem('fio-key',key);
+    localStorage.setItem('fio-pro-expiry',expiry.toString());
+    if(currentUser){try{await sb.from('profiles').upsert({id:currentUser.id,is_pro:true,license_key:key,pro_expiry:new Date(expiry).toISOString()});}catch(e){}}
+    updateProBtn();
+    msg.textContent=tr('activated');msg.style.color='var(--accent)';
+    document.getElementById('limitBanner').classList.remove('show');
+    setTimeout(closePro,1800);
+    if(allRows.length)applyFilters();
+  } else {
+    msg.textContent=tr('invalid');msg.style.color='var(--accent3)';
+  }
+}
+
+async function renewLicense(){
+  const key=document.getElementById('renewKey').value.trim();
+  const msg=document.getElementById('renewMsg');
+  if(!key){msg.textContent='Entrez votre clé.';msg.style.color='var(--accent3)';return;}
+  const isUUID=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(key);
+  if(isUUID){
+    const expiry=Date.now()+31*24*60*60*1000;
+    isPro=true;
+    localStorage.setItem('fio-pro','true');
+    localStorage.setItem('fio-key',key);
+    localStorage.setItem('fio-pro-expiry',expiry.toString());
+    if(currentUser){try{await sb.from('profiles').upsert({id:currentUser.id,is_pro:true,license_key:key,pro_expiry:new Date(expiry).toISOString()});}catch(e){}}
+    updateProBtn();
+    msg.textContent='Accès Pro renouvelé pour 31 jours !';msg.style.color='var(--accent)';
+    toast('Accès Pro renouvelé !','success');
+    setTimeout(()=>{toggleRenewForm();refreshProfilePage();if(allRows.length)applyFilters();},1500);
+  } else {
+    msg.textContent='Clé invalide.';msg.style.color='var(--accent3)';
+  }
+}
+
+function toggleRenewForm(){
+  const c=document.getElementById('renewFormContainer');
+  c.style.display=c.style.display==='none'||c.style.display===''?'block':'none';
+  if(c.style.display==='block')setTimeout(()=>document.getElementById('renewKey').focus(),50);
+}
+
+function togglePwdForm(){
+  const c=document.getElementById('pwdFormContainer');
+  const open=c.style.display==='none'||c.style.display==='';
+  c.style.display=open?'block':'none';
+  document.getElementById('pwdToggleBtn').textContent=open?'Annuler':'Changer le mot de passe';
+  if(open)setTimeout(()=>document.getElementById('newPwd').focus(),50);
+}
+
+async function changePassword(){
+  const pwd=document.getElementById('newPwd').value;
+  const confirm=document.getElementById('confirmPwd').value;
+  const msg=document.getElementById('pwdMsg');
+  const btn=document.getElementById('pwdSubmitBtn');
+  if(!pwd){msg.textContent='Entrez un nouveau mot de passe.';msg.className='form-msg error';return;}
+  if(pwd.length<6){msg.textContent='Minimum 6 caractères.';msg.className='form-msg error';return;}
+  if(pwd!==confirm){msg.textContent='Les mots de passe ne correspondent pas.';msg.className='form-msg error';return;}
+  btn.disabled=true;btn.textContent='…';
+  const{error}=await sb.auth.updateUser({password:pwd});
+  btn.disabled=false;btn.textContent='Mettre à jour';
+  if(error){msg.textContent='Erreur : '+error.message;msg.className='form-msg error';}
+  else{
+    msg.textContent='Mot de passe mis à jour !';msg.className='form-msg success';
+    document.getElementById('newPwd').value='';
+    document.getElementById('confirmPwd').value='';
+    setTimeout(()=>{togglePwdForm();msg.textContent='';},2000);
+  }
+}
+
+function refreshProfilePage(){
+  if(!currentUser)return;
+  const email=currentUser.email||'';
+  const exp=parseInt(localStorage.getItem('fio-pro-expiry')||'0');
+  const expired=exp>0&&Date.now()>exp;
+  const proValid=isPro&&!expired;
+  document.getElementById('phAvatar').textContent=email[0]?.toUpperCase()||'?';
+  document.getElementById('phName').textContent=email.split('@')[0]||'—';
+  document.getElementById('phEmail').textContent=email;
+  document.getElementById('phBadge').innerHTML=proValid
+    ?'<span class="badge-pro">✓ Pro actif</span>'
+    :'<span class="badge-free">Plan gratuit</span>';
+  document.getElementById('prRowFree').style.display=(!proValid&&!expired)?'flex':'none';
+  document.getElementById('prRowPro').style.display=proValid?'flex':'none';
+  document.getElementById('prRowExpired').style.display=expired?'flex':'none';
+  document.getElementById('prRowCancel').style.display=proValid?'flex':'none';
+  if(proValid&&exp){
+    document.getElementById('prExpiry').textContent='Expire le '+new Date(exp).toLocaleDateString('fr-FR')+' · 4,99€/mois';
+  }
+}
+
+function applyFreeLimit(rows){
+  if(isPro)return rows;
+  if(rows.length>FREE_LIMIT){
+    document.getElementById('limitText').textContent=tr('limitText',rows.length,FREE_LIMIT);
+    document.getElementById('limitBtn').textContent=tr('limitBtn');
+    document.getElementById('limitBanner').classList.add('show');
+    return rows.slice(0,FREE_LIMIT);
+  }
+  return rows;
+}
+
+// ══════════════════════════════════════════════════
+// FILE HANDLING
+// ══════════════════════════════════════════════════
+let allRows=[],filtered=[],headers=[],visibleCols=[];
+let curPage=1,sortCol=-1,sortAsc=true;
+const PER=50;
+const NAF={'87.10A':{label:'EHPAD',cls:'tag-87-10A'},'87.10B':{label:'USLD',cls:'tag-87-10B'},'88.99B':{label:'IME/MAS',cls:'tag-88-99B'},'87.20A':{label:'SAAD',cls:'tag-87-20A'},'88.10A':{label:'SSIAD',cls:'tag-88-10A'}};
+
+const dz=document.getElementById('dropzone');
+const fi=document.getElementById('fileInput');
+dz.addEventListener('click',()=>fi.click());
+dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('over');});
+dz.addEventListener('dragleave',()=>dz.classList.remove('over'));
+dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('over');if(e.dataTransfer.files[0])load(e.dataTransfer.files[0]);});
+fi.addEventListener('change',e=>{if(e.target.files[0])load(e.target.files[0]);});
+
+function load(file){const r=new FileReader();r.onload=e=>parseCSV(e.target.result,file);r.readAsText(file,'utf-8');}
+
+function parseCSV(text,file){
+  text=text.replace(/\r\n/g,'\n').replace(/\r/g,'\n');
+  const rows=[];let row=[],field='',inQ=false;
+  for(let i=0;i<text.length;i++){
+    const c=text[i];
+    if(c==='"'){if(inQ&&text[i+1]==='"'){field+='"';i++;}else inQ=!inQ;}
+    else if(c===','&&!inQ){row.push(field.trim());field='';}
+    else if(c==='\n'&&!inQ){row.push(field.trim());field='';if(row.some(f=>f))rows.push(row);row=[];}
+    else field+=c;
+  }
+  if(field||row.length>1){row.push(field.trim());if(row.some(f=>f))rows.push(row);}
+  if(rows.length<2){toast('Fichier vide ou invalide','error');return;}
+  headers=rows[0].map(h=>h.replace(/^"|"$/g,'').trim());
+  allRows=rows.slice(1).map(vals=>{const obj={};headers.forEach((h,i)=>{let v=(vals[i]||'').trim();if(v.startsWith('"')&&v.endsWith('"'))v=v.slice(1,-1).replace(/""/g,'"');obj[h]=v;});return obj;});
+  visibleCols=[...headers];
+  const cityH=headers.find(h=>/commune|ville|city|ciudad/i.test(h));
+  if(cityH)document.getElementById('cityLbl').textContent=cityH;
+  if(headers[2]){document.getElementById('col3Lbl').textContent=headers[2];document.getElementById('col3Search').placeholder=headers[2]+'…';}
+  document.getElementById('fileName').textContent=file.name;
+  document.getElementById('fileSize').textContent=' ('+(file.size/1024).toFixed(0)+' Ko)';
+  document.getElementById('statTotal').textContent=allRows.length;
+  document.getElementById('statCols').textContent=headers.length;
+  buildColPicker();
+  document.getElementById('dzWrap').style.display='none';
+  document.getElementById('workspace').classList.add('on');
+  document.getElementById('btnNewFile').classList.add('show');
+  applyFilters();
+  toast(tr('toastLoaded',allRows.length),'success');
+}
+
+function resetApp(){
+  allRows=[];filtered=[];headers=[];visibleCols=[];
+  curPage=1;sortCol=-1;sortAsc=true;
+  document.getElementById('dzWrap').style.display='flex';
+  document.getElementById('workspace').classList.remove('on');
+  document.getElementById('btnNewFile').classList.remove('show');
+  document.getElementById('limitBanner').classList.remove('show');
+  fi.value='';
+  ['globalSearch','citySearch','col3Search'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('emailOnly').checked=false;
+}
+
+// FILTERS
+document.getElementById('globalSearch').addEventListener('input',()=>{curPage=1;applyFilters();});
+document.getElementById('citySearch').addEventListener('input',()=>{curPage=1;applyFilters();});
+document.getElementById('col3Search').addEventListener('input',()=>{curPage=1;applyFilters();});
+document.getElementById('emailOnly').addEventListener('change',()=>{curPage=1;applyFilters();});
+
+function applyFilters(){
+  const g=document.getElementById('globalSearch').value.trim().toLowerCase();
+  const cq=document.getElementById('citySearch').value.trim().toLowerCase();
+  const c3=document.getElementById('col3Search').value.trim().toLowerCase();
+  const eo=document.getElementById('emailOnly').checked;
+  const cities=cq?cq.split(',').map(x=>x.trim()).filter(Boolean):[];
+  const cityCol=headers.find(h=>/commune|ville|city|ciudad/i.test(h))||headers[6];
+  const emailCol=headers.find(h=>/email|mail/i.test(h));
+  const col3=headers[2]||'';
+  filtered=allRows.filter(row=>{
+    if(g&&!Object.values(row).some(v=>v.toLowerCase().includes(g)))return false;
+    if(cities.length){const v=(row[cityCol]||'').toLowerCase();if(!cities.some(c=>v.includes(c)))return false;}
+    if(c3&&!(row[col3]||'').toLowerCase().includes(c3))return false;
+    if(eo&&emailCol&&!(row[emailCol]||'').trim())return false;
+    return true;
+  });
+  if(sortCol>=0){const k=headers[sortCol];filtered.sort((a,b)=>{const va=(a[k]||'').toLowerCase(),vb=(b[k]||'').toLowerCase();return sortAsc?va.localeCompare(vb):vb.localeCompare(va);});}
+  filtered=applyFreeLimit(filtered);
+  document.getElementById('statFiltered').textContent=filtered.length;
+  updateInfo();renderChips(g,cities,c3,eo);renderTable();renderPagination();
+}
+function updateInfo(){document.getElementById('resultsCount').innerHTML='<strong>'+filtered.length+'</strong> / '+allRows.length;}
+function renderChips(g,cities,c3,eo){
+  const wrap=document.getElementById('chips');wrap.innerHTML='';
+  if(g)addChip(wrap,'"'+g+'"',()=>{document.getElementById('globalSearch').value='';applyFilters();});
+  cities.forEach(c=>addChip(wrap,c,()=>{const cur=document.getElementById('citySearch').value.split(',').map(x=>x.trim()).filter(x=>x!==c);document.getElementById('citySearch').value=cur.join(', ');applyFilters();}));
+  if(c3)addChip(wrap,c3,()=>{document.getElementById('col3Search').value='';applyFilters();});
+  if(eo)addChip(wrap,tr('emailOnly'),()=>{document.getElementById('emailOnly').checked=false;applyFilters();});
+}
+function addChip(p,label,onClick){const c=document.createElement('div');c.className='chip';c.textContent=label+' ✕';c.onclick=onClick;p.appendChild(c);}
+
+// TABLE
+function renderTable(){
+  const cols=headers.filter(h=>visibleCols.includes(h));
+  document.getElementById('tHead').innerHTML='<tr>'+cols.map(h=>{const idx=headers.indexOf(h);const arr=sortCol===idx?(sortAsc?' ↑':' ↓'):'';return`<th class="${sortCol===idx?'sorted':''}" onclick="sortBy(${idx})">${h}${arr}</th>`;}).join('')+'</tr>';
+  const start=(curPage-1)*PER,page=filtered.slice(start,start+PER);
+  const emailCol=headers.find(h=>/email|mail/i.test(h));
+  const nafCol=headers.find(h=>/naf|secteur/i.test(h));
+  const siteCol=headers.find(h=>/site|web|url/i.test(h));
+  const nameCol=headers.find(h=>/denomination|nom|name|nombre/i.test(h))||headers[0];
+  if(!page.length){document.getElementById('tBody').innerHTML=`<tr><td colspan="${cols.length}"><div class="empty-state"><p>—</p><p>${tr('noResults')}</p></div></td></tr>`;return;}
+  document.getElementById('tBody').innerHTML=page.map(row=>{
+    const cells=cols.map(h=>{
+      const v=row[h]||'';
+      if(h===emailCol&&v){const emails=v.split('|').map(e=>e.trim()).filter(Boolean);return`<td class="td-email">${emails.map(e=>`<a href="mailto:${e}">${e}</a>`).join('<br>')}</td>`;}
+      if(h===nafCol&&v){const n=NAF[v];return n?`<td><span class="tag ${n.cls}">${n.label}</span></td>`:`<td><span class="tag tag-other">${v}</span></td>`;}
+      if(h===siteCol&&v)return`<td class="td-site"><a href="${v}" target="_blank">site</a></td>`;
+      if(h===nameCol)return`<td style="font-weight:500" title="${v}">${v||'<span class="no-val">—</span>'}</td>`;
+      return`<td title="${v}">${v||'<span class="no-val">—</span>'}</td>`;
+    });
+    return`<tr>${cells.join('')}</tr>`;
+  }).join('');
+}
+function sortBy(idx){if(sortCol===idx)sortAsc=!sortAsc;else{sortCol=idx;sortAsc=true;}curPage=1;applyFilters();}
+
+// PAGINATION
+function renderPagination(){
+  const total=Math.ceil(filtered.length/PER),pag=document.getElementById('pagination');
+  if(total<=1){pag.innerHTML='';return;}
+  let h=`<button class="pg-btn" onclick="goPage(${curPage-1})" ${curPage===1?'disabled':''}>←</button>`;
+  for(let i=1;i<=total;i++){
+    if(i===1||i===total||Math.abs(i-curPage)<=1)h+=`<button class="pg-btn ${i===curPage?'active':''}" onclick="goPage(${i})">${i}</button>`;
+    else if(Math.abs(i-curPage)===2)h+=`<span class="pg-sep">…</span>`;
+  }
+  h+=`<button class="pg-btn" onclick="goPage(${curPage+1})" ${curPage===total?'disabled':''}>→</button>`;
+  pag.innerHTML=h;
+}
+function goPage(p){const t=Math.ceil(filtered.length/PER);if(p<1||p>t)return;curPage=p;renderTable();renderPagination();window.scrollTo({top:0,behavior:'smooth'});}
+
+// COL PICKER
+function buildColPicker(){document.getElementById('colDropdown').innerHTML=headers.map(h=>`<label class="col-item"><input type="checkbox" ${visibleCols.includes(h)?'checked':''} onchange="toggleCol('${h}',this.checked)">${h}</label>`).join('');}
+function toggleCol(h,on){if(on){if(!visibleCols.includes(h))visibleCols.push(h);}else{visibleCols=visibleCols.filter(c=>c!==h);}renderTable();}
+function toggleCols(){document.getElementById('colDropdown').classList.toggle('open');}
+document.addEventListener('click',e=>{if(!e.target.closest('.col-wrap'))document.getElementById('colDropdown').classList.remove('open');});
+
+// EXPORT CSV
+document.getElementById('btnCSV').addEventListener('click',exportCSV);
+function exportCSV(){
+  if(!filtered.length)return;
+  const cols=[...headers];
+  const lines=[cols.map(h=>'"'+h+'"').join(',')];
+  filtered.forEach(row=>lines.push(cols.map(h=>'"'+(row[h]||'').replace(/"/g,'""')+'"').join(',')));
+  const blob=new Blob(['\uFEFF'+lines.join('\n')],{type:'text/csv;charset=utf-8;'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download='csvfiltrage-'+new Date().toISOString().slice(0,10)+'.csv';
+  a.style.display='none';document.body.appendChild(a);
+  setTimeout(()=>{a.click();setTimeout(()=>{document.body.removeChild(a);URL.revokeObjectURL(url);},300);},100);
+  toast(tr('toastCSV'),'success');
+}
+
+// EXPORT PDF
+document.getElementById('btnPDF').addEventListener('click',exportPDF);
+function exportPDF(){
+  if(!filtered.length)return;
+  if(!isPro){openPro();return;}
+  if(typeof window.jspdf==='undefined'){toast('Librairie PDF en chargement…','error');return;}
+  const{jsPDF}=window.jspdf;
+  const doc=new jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
+  const cols=[...headers];
+  const rows=filtered.slice(0,500).map(row=>cols.map(h=>(row[h]||'').substring(0,60)));
+  doc.setFillColor(255,255,255);doc.rect(0,0,297,210,'F');
+  doc.setFillColor(0,100,80);doc.rect(0,0,297,22,'F');
+  doc.setTextColor(255,255,255);doc.setFontSize(13);doc.setFont('helvetica','bold');
+  doc.text('CSV Filtrage.io',14,10);
+  doc.setFont('helvetica','normal');doc.setFontSize(8);
+  doc.text(tr('pdfTitle')+' · '+new Date().toLocaleDateString()+' · '+filtered.length+' lignes',14,17);
+  doc.autoTable({head:[cols],body:rows,startY:26,theme:'grid',
+    styles:{font:'helvetica',fontSize:6.5,textColor:[20,30,50],fillColor:[255,255,255],lineColor:[200,210,225],lineWidth:.2,overflow:'linebreak',cellPadding:2},
+    headStyles:{fillColor:[0,100,80],textColor:[255,255,255],fontStyle:'bold',fontSize:7},
+    alternateRowStyles:{fillColor:[245,248,252]},margin:{left:10,right:10}});
+  doc.save('csvfiltrage-'+new Date().toISOString().slice(0,10)+'.pdf');
+  toast(tr('toastPDF'),'success');
+}
+
+// TOAST
+let toastTm;
+function toast(msg,type='success'){
+  const el=document.getElementById('toast');
+  el.textContent=msg;el.className='toast '+type+' show';
+  clearTimeout(toastTm);toastTm=setTimeout(()=>el.classList.remove('show'),3500);
+}
+
+// ══════════════════════════════════════════════════
+// SUPABASE AUTH — toujours en dernier
+// ══════════════════════════════════════════════════
+const SUPA_URL='https://mvitqeijzcakoqldftmp.supabase.co';
+const SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im12aXRxZWlqemNha29xbGRmdG1wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM5NTkwNzksImV4cCI6MjA4OTUzNTA3OX0.W2Lw1rtOBsAIgdtKZYIvol3xKCmAY4Wem1zpNc1hG4I';
+const sb=supabase.createClient(SUPA_URL,SUPA_KEY);
+let currentUser=null;
+
+function updateAuthUI(){
+  const si=document.getElementById('btnSignIn');
+  const bu=document.getElementById('btnUserNav');
+  const lo=document.getElementById('btnLogout');
+  const nc=document.getElementById('navCenter');
+  if(currentUser){
+    si.style.display='none';
+    bu.classList.add('show');
+    lo.classList.add('show');
+    nc.style.display='flex';
+    const email=currentUser.email||'';
+    document.getElementById('navAvatar').textContent=email[0]?.toUpperCase()||'?';
+    document.getElementById('navEmail').textContent=email.split('@')[0]||'Mon compte';
+  } else {
+    si.style.display='inline-flex';
+    bu.classList.remove('show');
+    lo.classList.remove('show');
+    nc.style.display='none';
+  }
+}
+
+async function fetchProStatus(){
+  if(!currentUser)return;
+  try{
+    const{data}=await sb.from('profiles').select('is_pro,pro_expiry').eq('id',currentUser.id).single();
+    if(data?.is_pro&&data?.pro_expiry){
+      const exp=new Date(data.pro_expiry).getTime();
+      if(Date.now()<exp){
+        isPro=true;
+        localStorage.setItem('fio-pro','true');
+        localStorage.setItem('fio-pro-expiry',exp.toString());
+        updateProBtn();
+        if(allRows.length)applyFilters();
+      }
+    }
+  }catch(e){}
+}
+
+sb.auth.onAuthStateChange((event,session)=>{
+  currentUser=session?.user??null;
+  updateAuthUI();
+  if(event==='SIGNED_IN'){
+    closeAuth();
+    toast('Connecté — bienvenue !','success');
+    fetchProStatus();
+    // Si modal Pro ouvert, passer à l'étape checkout
+    if(document.getElementById('proOverlay').classList.contains('open'))syncProModal();
+    // Si dans le modal Pro via proSignIn/proSignUp
+    document.getElementById('proAuthMsg').textContent='';
+  }
+  if(event==='SIGNED_OUT'){
+    isPro=false;
+    localStorage.removeItem('fio-pro');
+    localStorage.removeItem('fio-pro-expiry');
+    localStorage.removeItem('fio-key');
+    updateProBtn();
+    showPage('app');
+    if(allRows.length)applyFilters();
+  }
+});
+
+// Restaure la session
+(async()=>{
+  const{data}=await sb.auth.getSession();
+  currentUser=data.session?.user??null;
+  updateAuthUI();
+  if(currentUser)await fetchProStatus();
+  // Nettoie le hash OAuth Google après redirect
+  if(window.location.hash?.includes('access_token')||window.location.search?.includes('code='))
+    window.history.replaceState(null,'',window.location.pathname);
+})();
+
+// AUTH MODAL
+let authMode='login';
+function openAuth(mode='login'){
+  authMode=mode;switchTab(mode);
+  document.getElementById('authOverlay').classList.add('open');
+  document.getElementById('authMsg').textContent='';
+  setTimeout(()=>document.getElementById('authEmail').focus(),100);
+}
+function closeAuth(){document.getElementById('authOverlay').classList.remove('open');}
+function switchTab(mode){
+  authMode=mode;
+  document.getElementById('tabLogin').classList.toggle('active',mode==='login');
+  document.getElementById('tabRegister').classList.toggle('active',mode==='register');
+  document.getElementById('fieldConfirm').style.display=mode==='register'?'flex':'none';
+  document.getElementById('btnAuthSubmit').textContent=mode==='login'?tr('loginBtn'):tr('createBtn');
+  document.getElementById('authMsg').textContent='';
+  document.getElementById('authPassword').autocomplete=mode==='login'?'current-password':'new-password';
+}
+async function handleAuthSubmit(){
+  const email=document.getElementById('authEmail').value.trim();
+  const pwd=document.getElementById('authPassword').value;
+  const confirm=document.getElementById('authConfirm').value;
+  const btn=document.getElementById('btnAuthSubmit');
+  if(!email||!pwd){setAuthMsg('Veuillez remplir tous les champs.','error');return;}
+  if(authMode==='register'){
+    if(pwd.length<6){setAuthMsg('Mot de passe trop court (6 caractères min).','error');return;}
+    if(pwd!==confirm){setAuthMsg('Les mots de passe ne correspondent pas.','error');return;}
+  }
+  btn.disabled=true;btn.textContent='…';
+  if(authMode==='login'){
+    const{error}=await sb.auth.signInWithPassword({email,password:pwd});
+    if(error){setAuthMsg('Email ou mot de passe incorrect.','error');btn.disabled=false;btn.textContent=tr('loginBtn');}
+  } else {
+    const{error}=await sb.auth.signUp({email,password:pwd});
+    if(error){setAuthMsg(error.message||'Erreur.','error');btn.disabled=false;btn.textContent=tr('createBtn');}
+    else{setAuthMsg('Compte créé ! Vérifiez votre email pour confirmer.','success');btn.disabled=false;btn.textContent=tr('createBtn');}
+  }
+}
+async function signInWithGoogle(){
+  const{error}=await sb.auth.signInWithOAuth({
+    provider:'google',
+    options:{redirectTo:'https://csvfilter.site',queryParams:{prompt:'select_account'}}
+  });
+  if(error)setAuthMsg('Erreur Google : '+error.message,'error');
+}
+async function handleSignOut(){
+  await sb.auth.signOut();
+  toast('Déconnecté','success');
+}
+function setAuthMsg(text,type){const el=document.getElementById('authMsg');el.textContent=text;el.className='auth-msg '+type;}
+
+// AUTH dans modal Pro
+async function proSignIn(){
+  const email=document.getElementById('proEmail').value.trim();
+  const pwd=document.getElementById('proPassword').value;
+  const msg=document.getElementById('proAuthMsg');
+  if(!email||!pwd){msg.textContent='Remplissez email et mot de passe.';msg.style.color='var(--accent3)';return;}
+  msg.textContent='…';msg.style.color='var(--text2)';
+  const{error}=await sb.auth.signInWithPassword({email,password:pwd});
+  if(error){msg.textContent='Email ou mot de passe incorrect.';msg.style.color='var(--accent3)';}
+}
+async function proSignUp(){
+  const email=document.getElementById('proEmail').value.trim();
+  const pwd=document.getElementById('proPassword').value;
+  const msg=document.getElementById('proAuthMsg');
+  if(!email||!pwd){msg.textContent='Remplissez email et mot de passe.';msg.style.color='var(--accent3)';return;}
+  if(pwd.length<6){msg.textContent='Mot de passe trop court (6 min).';msg.style.color='var(--accent3)';return;}
+  msg.textContent='…';msg.style.color='var(--text2)';
+  const{error}=await sb.auth.signUp({email,password:pwd});
+  if(error){msg.textContent=error.message||'Erreur.';msg.style.color='var(--accent3)';}
+  else{msg.textContent='Compte créé ! Vérifiez votre email.';msg.style.color='var(--accent)';}
+}
+
+// ══════════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════════
+setLang('fr');
+
+// ══════════════════════════════════════════════════
+// PRIX DYNAMIQUE LEMONSQUEEZY
+// ══════════════════════════════════════════════════
+const LEMON_PRODUCT_ID = '904252';
+const LEMON_VARIANT_URL = `https://api.lemonsqueezy.com/v1/products/${LEMON_PRODUCT_ID}`;
+
+async function fetchLivePrice() {
+  try {
+    // Passe par notre Netlify Function pour ne pas exposer la clé API
+    const res = await fetch('/.netlify/functions/price');
+    if (!res.ok) return;
+    const data = await res.json();
+    if (data.price !== undefined && data.period) {
+      updateAllPrices(data.price, data.period);
+    }
+  } catch(e) {
+    // Silencieux — garde les prix par défaut
+  }
+}
+
+function updateAllPrices(euros, period) {
+  const priceStr = euros + '€';
+  const fullStr = priceStr + ' ' + period;
+
+  // Modal Pro - prix central
+  const priceEl = document.getElementById('proPrice');
+  if (priceEl) priceEl.innerHTML = priceStr + ' <span id="proPerMonth">' + period + '</span>';
+
+  // Bouton topbar
+  const btnPro = document.getElementById('btnPro');
+  if (btnPro && !isPro) btnPro.textContent = 'Pro ' + priceStr + '/mois';
+
+  // Bouton checkout
+  const btnLemon = document.getElementById('btnLemon');
+  if (btnLemon) btnLemon.textContent = 'S\'abonner maintenant — ' + fullStr;
+
+  // Bouton upgrade dans le profil
+  const prExpiry = document.getElementById('prExpiry');
+  if (prExpiry && isPro) prExpiry.textContent = prExpiry.textContent.replace(/\d+,\d+€\/mois/, priceStr + '/mois');
+
+  // i18n — met à jour les traductions pour que setLang() garde le bon prix
+  ['fr','en','es','zh'].forEach(l => {
+    if (T[l]) {
+      T[l].proPrice = priceStr;
+      T[l].proBtn = 'Pro ' + priceStr + (l === 'zh' ? '/月' : l === 'en' ? '/mo' : '/mois');
+    }
+  });
+}
+
+// Lance la récupération du prix dès le chargement
+fetchLivePrice();
+
+</script>
+</body>
+</html>
