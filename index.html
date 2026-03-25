@@ -4,27 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>CSV Filter.io — Smart CSV Explorer</title>
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%2306080f'/><rect x='6' y='4' width='14' height='18' rx='2' stroke='%234fffb0' stroke-width='1.5' fill='none'/><line x1='9' y1='9' x2='17' y2='9' stroke='%234fffb0' stroke-width='1.2' stroke-linecap='round'/><line x1='9' y1='12' x2='17' y2='12' stroke='%234fffb0' stroke-width='1.2' stroke-linecap='round'/><line x1='9' y1='15' x2='13' y2='15' stroke='%234fffb0' stroke-width='1.2' stroke-linecap='round'/><text x='16' y='28' font-family='monospace' font-size='9' font-weight='bold' fill='%234fffb0'>CSV</text></svg>">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%234fffb0'/><text x='16' y='22' text-anchor='middle' font-family='monospace' font-size='11' font-weight='900' fill='%2306080f'>CSV</text></svg>">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Clash+Display:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
-
-:root {
-  --bg:#06080f;--surface:#0d1117;--surface2:#131920;
-  --border:#1c2535;--border2:#243040;
-  --accent:#4fffb0;--accent2:#00aaff;--accent3:#ff4d7e;
-  --text:#e2eaf5;--text2:#7a8fa8;--text3:#3d5068;
-  --radius:12px;--shadow:0 4px 24px rgba(0,0,0,.4);
-}
-body.light{
-  --bg:#f0f4fa;--surface:#fff;--surface2:#e8edf7;
-  --border:#cdd5e8;--border2:#b8c4d8;
-  --accent:#00875a;--accent2:#0066cc;--accent3:#cc1144;
-  --text:#0f1824;--text2:#2d4060;--text3:#6b80a0;
-  --shadow:0 4px 24px rgba(0,0,0,.12);
-}
+:root{--bg:#06080f;--surface:#0d1117;--surface2:#131920;--border:#1c2535;--border2:#243040;--accent:#4fffb0;--accent2:#00aaff;--accent3:#ff4d7e;--text:#e2eaf5;--text2:#7a8fa8;--text3:#3d5068;--radius:12px;--shadow:0 4px 24px rgba(0,0,0,.4)}
+body.light{--bg:#f0f4fa;--surface:#fff;--surface2:#e8edf7;--border:#cdd5e8;--border2:#b8c4d8;--accent:#00875a;--accent2:#0066cc;--accent3:#cc1144;--text:#0f1824;--text2:#2d4060;--text3:#6b80a0;--shadow:0 4px 24px rgba(0,0,0,.12)}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
 body{background:var(--bg);color:var(--text);font-family:'JetBrains Mono',monospace;min-height:100vh;overflow-x:hidden;transition:background .3s,color .3s}
@@ -33,7 +20,7 @@ body::after{content:'';position:fixed;inset:0;background-image:linear-gradient(r
 body.light::after{background-image:linear-gradient(rgba(180,190,210,.4) 1px,transparent 1px),linear-gradient(90deg,rgba(180,190,210,.4) 1px,transparent 1px)}
 .app{position:relative;z-index:1;display:flex;flex-direction:column;min-height:100vh}
 
-/* ── TOPBAR ── */
+/* TOPBAR */
 .topbar{display:flex;align-items:center;justify-content:space-between;padding:0 28px;height:58px;border-bottom:1px solid var(--border);background:rgba(6,8,15,.88);backdrop-filter:blur(16px);position:sticky;top:0;z-index:200;gap:12px}
 body.light .topbar{background:rgba(240,244,250,.94)}
 .logo-text{font-family:'Clash Display',sans-serif;font-size:17px;font-weight:700;letter-spacing:-.5px;white-space:nowrap;cursor:pointer}
@@ -62,11 +49,11 @@ body.light .topbar{background:rgba(240,244,250,.94)}
 .btn-logout-nav:hover{background:rgba(255,77,126,.08);border-color:var(--accent3)}
 .btn-logout-nav.show{display:inline-flex}
 
-/* ── PAGES ── */
+/* PAGES */
 .page{display:none}
 .page.active{display:block}
 
-/* ── MAIN ── */
+/* MAIN */
 .main{flex:1;padding:28px;max-width:1400px;margin:0 auto;width:100%}
 
 /* DROPZONE */
@@ -178,7 +165,7 @@ body.light .td-email{color:#006644}
 .toast.success{border-color:rgba(79,255,176,.35)}
 .toast.error{border-color:rgba(255,77,126,.35)}
 
-/* ── PROFILE PAGE ── */
+/* PROFILE PAGE */
 .profile-page{flex:1;padding:48px 28px;max-width:760px;margin:0 auto;width:100%}
 .profile-hero{display:flex;align-items:center;gap:24px;margin-bottom:40px;padding:28px;background:var(--surface);border:1px solid var(--border);border-radius:20px}
 .profile-hero-avatar{width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-family:'Clash Display',sans-serif;font-size:28px;font-weight:700;color:#000;flex-shrink:0}
@@ -195,7 +182,6 @@ body.light .profile-card{background:#fff}
 .profile-row{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--border);gap:12px}
 .profile-row:last-child{border-bottom:none}
 .profile-row-label{font-size:12px;color:var(--text2)}
-.profile-row-value{font-size:12px;color:var(--text);text-align:right}
 .profile-row-sub{font-size:10px;color:var(--text3);margin-top:2px}
 .btn-action{background:none;border:1px solid var(--border2);border-radius:8px;padding:6px 14px;font-family:'JetBrains Mono',monospace;font-size:11px;cursor:pointer;transition:all .2s;color:var(--text2);text-decoration:none;display:inline-block;white-space:nowrap}
 .btn-action:hover{border-color:var(--accent);color:var(--accent)}
@@ -218,7 +204,7 @@ body.light .profile-card{background:#fff}
 .profile-logout-btn{display:block;width:100%;background:none;border:1px solid rgba(255,77,126,.25);border-radius:12px;padding:12px;color:var(--accent3);font-family:'JetBrains Mono',monospace;font-size:12px;cursor:pointer;margin-top:24px;transition:all .2s;text-align:center}
 .profile-logout-btn:hover{background:rgba(255,77,126,.08);border-color:var(--accent3)}
 
-/* ── MODAL ── */
+/* MODAL */
 .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(8px);z-index:900;align-items:center;justify-content:center;padding:20px}
 .overlay.open{display:flex}
 .modal{background:var(--surface);border:1px solid var(--border2);border-radius:20px;padding:36px 32px;max-width:460px;width:100%;position:relative;box-shadow:0 20px 60px rgba(0,0,0,.5);max-height:90vh;overflow-y:auto}
@@ -266,24 +252,41 @@ body.light .modal{background:#fff}
 .btn-checkout:disabled{opacity:.6;cursor:not-allowed;transform:none}
 .pro-checkout-note{font-size:10px;color:var(--text3);text-align:center;margin-bottom:16px}
 
+/* GUIDE MODAL */
+.guide-modal{max-width:600px;padding:0;overflow:hidden}
+.guide-header{padding:22px 28px 0;border-bottom:1px solid var(--border);background:var(--surface);position:sticky;top:0;z-index:10}
+.guide-header h2{font-family:'Clash Display',sans-serif;font-size:19px;font-weight:700;margin-bottom:16px}
+.guide-tabs{display:flex;gap:2px;overflow-x:auto;padding-bottom:0}
+.g-tab{display:flex;align-items:center;gap:7px;background:none;border:none;border-bottom:2px solid transparent;padding:10px 16px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text2);cursor:pointer;transition:all .2s;white-space:nowrap}
+.g-tab:hover{color:var(--text)}
+.g-tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+.g-tab svg{opacity:.7}
+.g-tab.active svg{opacity:1}
+.guide-body{padding:24px 28px;max-height:62vh;overflow-y:auto}
+.g-panel{display:none;animation:fadeIn .2s ease}
+.g-panel.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+.g-desc{font-size:12px;color:var(--text2);margin-bottom:18px;line-height:1.7}
+.g-schema{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:18px 14px;margin-bottom:20px}
+.g-schema svg{display:block;width:100%;height:auto}
+.g-steps{list-style:none;display:flex;flex-direction:column;gap:14px;margin-bottom:8px}
+.g-steps li{display:flex;align-items:flex-start;gap:12px;font-size:12px;color:var(--text2);line-height:1.6}
+.g-steps li strong{color:var(--text)}
+.g-steps code{background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:1px 6px;font-size:10px;color:var(--accent)}
+.g-num{display:flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:rgba(79,255,176,.1);border:1px solid rgba(79,255,176,.2);color:var(--accent);font-size:10px;font-weight:700;flex-shrink:0;margin-top:1px}
+.g-badge-pro{display:inline-block;background:#ffd700;color:#000;font-size:8px;font-weight:700;padding:1px 7px;border-radius:10px;margin-left:4px;vertical-align:middle}
+.g-cta{display:block;width:100%;background:linear-gradient(135deg,#ffd700,#ffaa00);border:none;border-radius:10px;padding:12px;color:#000;font-family:'Clash Display',sans-serif;font-size:14px;font-weight:700;cursor:pointer;text-align:center;transition:all .2s;margin-top:20px}
+.g-cta:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(255,215,0,.35)}
+
 /* RESPONSIVE */
-@media(max-width:900px){
-  .filter-bar{grid-template-columns:1fr 1fr}
-  .topbar{padding:0 14px}
-  .main,.profile-page{padding:14px}
-  .topbar-center{display:none}
-  .profile-hero{flex-direction:column;text-align:center}
-}
-@media(max-width:600px){
-  .filter-bar{grid-template-columns:1fr}
-  .file-stats{display:none}
-}
+@media(max-width:900px){.filter-bar{grid-template-columns:1fr 1fr}.topbar{padding:0 14px}.main,.profile-page{padding:14px}.topbar-center{display:none}.profile-hero{flex-direction:column;text-align:center}}
+@media(max-width:600px){.filter-bar{grid-template-columns:1fr}.file-stats{display:none}}
 </style>
 </head>
 <body>
 <div class="app">
 
-<!-- ══ TOPBAR ══ -->
+<!-- TOPBAR -->
 <div class="topbar">
   <div class="logo-text" onclick="showPage('app')">CSV Filter<span>.io</span></div>
   <div class="topbar-center" id="navCenter" style="display:none">
@@ -295,10 +298,7 @@ body.light .modal{background:#fff}
     <button class="btn-newfile" id="btnNewFile" onclick="resetApp()">↺ <span id="newFileTxt">Nouveau fichier</span></button>
     <button class="theme-btn" id="themeBtn" onclick="toggleTheme()">🌙</button>
     <select class="lang-select" id="langSelect" onchange="setLang(this.value)">
-      <option value="fr">FR</option>
-      <option value="en">EN</option>
-      <option value="es">ES</option>
-      <option value="zh">ZH</option>
+      <option value="fr">FR</option><option value="en">EN</option><option value="es">ES</option><option value="zh">ZH</option>
     </select>
     <button class="btn-signin" id="btnSignIn" onclick="openAuth('login')">Connexion</button>
     <button class="btn-user-nav" id="btnUserNav" onclick="showPage('profile')">
@@ -309,7 +309,7 @@ body.light .modal{background:#fff}
   </div>
 </div>
 
-<!-- ══ PAGE APP ══ -->
+<!-- PAGE APP -->
 <div class="page active" id="pageApp">
   <div class="main">
     <div class="dropzone-wrap" id="dzWrap">
@@ -319,9 +319,7 @@ body.light .modal{background:#fff}
         </div>
         <div class="dz-title" id="dzTitle">Importe ton fichier CSV</div>
         <p class="dz-sub" id="dzSub">Glisse ton fichier ici ou clique pour parcourir.<br>Fonctionne avec n'importe quel fichier CSV.</p>
-        <button class="dz-btn" onclick="event.stopPropagation();document.getElementById('fileInput').click()">
-          ↑ <span id="dzBtn">Choisir un fichier</span>
-        </button>
+        <button class="dz-btn" onclick="event.stopPropagation();document.getElementById('fileInput').click()">↑ <span id="dzBtn">Choisir un fichier</span></button>
         <p class="dz-formats" id="dzFormats">FORMAT ACCEPTÉ · CSV (UTF-8)</p>
         <input type="file" id="fileInput" accept=".csv">
       </div>
@@ -364,7 +362,7 @@ body.light .modal{background:#fff}
   </div>
 </div>
 
-<!-- ══ PAGE PROFIL ══ -->
+<!-- PAGE PROFIL -->
 <div class="page" id="pageProfile">
   <div class="profile-page">
     <div class="profile-hero">
@@ -386,7 +384,6 @@ body.light .modal{background:#fff}
           <div><div class="profile-row-label">Pro actif</div><div class="profile-row-sub" id="prExpiry">—</div></div>
           <span style="color:var(--accent);font-size:20px">✓</span>
         </div>
-        <!-- Gérer abonnement Stripe -->
         <div class="profile-row" id="prRowCancel" style="display:none">
           <div><div class="profile-row-label">Gérer l'abonnement</div><div class="profile-row-sub">Modifier ou résilier via Stripe</div></div>
           <button class="btn-action danger" onclick="openCustomerPortal()">Gérer →</button>
@@ -419,7 +416,7 @@ body.light .modal{background:#fff}
         </div>
         <div class="profile-row">
           <div><div class="profile-row-label">Documentation</div><div class="profile-row-sub">Guides et tutoriels</div></div>
-          <a class="btn-action" href="mailto:arthurbusi.contact@gmail.com">Aide →</a>
+          <button class="btn-action" onclick="openGuide()">Aide →</button>
         </div>
       </div>
     </div>
@@ -431,12 +428,12 @@ body.light .modal{background:#fff}
 
 <div class="toast" id="toast"></div>
 
-<!-- ══ AUTH MODAL ══ -->
+<!-- AUTH MODAL -->
 <div class="overlay" id="authOverlay" onclick="if(event.target===this)closeAuth()">
   <div class="modal" style="max-width:420px">
     <button class="modal-close" onclick="closeAuth()">✕</button>
     <h2 style="font-family:'Clash Display',sans-serif;font-size:22px;font-weight:700;text-align:center;margin-bottom:4px">CSV Filter<span style="color:var(--accent)">.io</span></h2>
-    <p style="text-align:center;font-size:12px;color:var(--text2);margin-bottom:18px" id="authSubtitle">Bienvenue</p>
+    <p style="text-align:center;font-size:12px;color:var(--text2);margin-bottom:18px">Bienvenue</p>
     <div class="auth-tabs">
       <button class="auth-tab active" id="tabLogin" onclick="switchTab('login')">Connexion</button>
       <button class="auth-tab" id="tabRegister" onclick="switchTab('register')">Créer un compte</button>
@@ -454,7 +451,7 @@ body.light .modal{background:#fff}
   </div>
 </div>
 
-<!-- ══ PRO MODAL ══ -->
+<!-- PRO MODAL -->
 <div class="overlay" id="proOverlay" onclick="if(event.target===this)closePro()">
   <div class="modal">
     <button class="modal-close" onclick="closePro()">✕</button>
@@ -469,8 +466,6 @@ body.light .modal{background:#fff}
       <li id="f5">Sélecteur de colonnes</li>
       <li id="f6">Annulation à tout moment</li>
     </ul>
-
-    <!-- Étape 1 : non connecté -->
     <div class="pro-step active" id="proStepAuth">
       <div style="background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:18px;margin-bottom:12px">
         <p style="font-size:11px;color:var(--text2);text-align:center;margin-bottom:14px">Connectez-vous pour finaliser l'abonnement</p>
@@ -490,8 +485,6 @@ body.light .modal{background:#fff}
         <div class="auth-msg" id="proAuthMsg"></div>
       </div>
     </div>
-
-    <!-- Étape 2 : connecté → Stripe Checkout -->
     <div class="pro-step" id="proStepCheckout">
       <div class="pro-user-bar">
         <div class="u-avatar" id="proAvatar">?</div>
@@ -504,87 +497,206 @@ body.light .modal{background:#fff}
   </div>
 </div>
 
+<!-- GUIDE MODAL -->
+<div class="overlay" id="guideOverlay" onclick="if(event.target===this)closeGuide()">
+  <div class="modal guide-modal" style="max-width:600px">
+    <button class="modal-close" onclick="closeGuide()" style="top:14px;right:14px;z-index:20">✕</button>
+    <div class="guide-header">
+      <h2 id="gTitle">Guide d'utilisation</h2>
+      <div class="guide-tabs">
+        <button class="g-tab active" onclick="showGuideTab(0)" id="gt0">
+          <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><rect x="2" y="1" width="9" height="12" rx="1.5" stroke="currentColor" stroke-width="1.4" fill="none"/><line x1="4" y1="5" x2="9" y2="5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><line x1="4" y1="7.5" x2="9" y2="7.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><line x1="4" y1="10" x2="7" y2="10" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><path d="M11 9v5M8.5 11.5l2.5-2.5 2.5 2.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span id="gt0lbl">Import</span>
+        </button>
+        <button class="g-tab" onclick="showGuideTab(1)" id="gt1">
+          <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.4"/><line x1="11" y1="11" x2="14" y2="14" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+          <span id="gt1lbl">Filtres</span>
+        </button>
+        <button class="g-tab" onclick="showGuideTab(2)" id="gt2">
+          <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M8 2v9M5 8l3 3 3-3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><line x1="2" y1="13" x2="14" y2="13" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+          <span id="gt2lbl">Export</span>
+        </button>
+        <button class="g-tab" onclick="showGuideTab(3)" id="gt3">
+          <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><polygon points="8,2 10,6 14,6.5 11,9.5 11.8,14 8,12 4.2,14 5,9.5 2,6.5 6,6" stroke="currentColor" stroke-width="1.3" fill="none" stroke-linejoin="round"/></svg>
+          <span id="gt3lbl">Pro</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="guide-body">
+
+      <!-- TAB 0 : Import -->
+      <div class="g-panel active" id="gp0">
+        <p class="g-desc" id="g0desc">Importe n'importe quel fichier CSV en quelques secondes.</p>
+        <div class="g-schema">
+          <svg viewBox="0 0 500 150" xmlns="http://www.w3.org/2000/svg">
+            <defs><marker id="a0" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#7a8fa8"/></marker></defs>
+            <!-- Fichier -->
+            <rect x="16" y="25" width="84" height="100" rx="7" fill="none" stroke="#4fffb0" stroke-width="1.4" opacity=".6"/>
+            <rect x="16" y="25" width="84" height="20" rx="7" fill="#4fffb0" opacity=".12"/>
+            <text x="58" y="39" text-anchor="middle" font-family="monospace" font-size="9" fill="#4fffb0" font-weight="bold">CSV</text>
+            <line x1="28" y1="60" x2="88" y2="60" stroke="#4fffb0" stroke-width=".9" opacity=".35"/>
+            <line x1="28" y1="72" x2="88" y2="72" stroke="#4fffb0" stroke-width=".9" opacity=".35"/>
+            <line x1="28" y1="84" x2="70" y2="84" stroke="#4fffb0" stroke-width=".9" opacity=".35"/>
+            <line x1="28" y1="96" x2="88" y2="96" stroke="#4fffb0" stroke-width=".9" opacity=".35"/>
+            <line x1="28" y1="108" x2="80" y2="108" stroke="#4fffb0" stroke-width=".9" opacity=".35"/>
+            <text x="58" y="140" text-anchor="middle" font-family="monospace" font-size="8" fill="#3d5068">data.csv</text>
+            <!-- Flèche 1 -->
+            <path d="M106 75 L158 75" stroke="#3d5068" stroke-width="1.3" stroke-dasharray="5,3" marker-end="url(#a0)"/>
+            <text x="132" y="68" text-anchor="middle" font-family="monospace" font-size="8" fill="#7a8fa8" id="g0step1lbl">Glisser-déposer</text>
+            <!-- Zone drop -->
+            <rect x="162" y="35" width="120" height="80" rx="10" fill="none" stroke="#4fffb0" stroke-width="1.4" stroke-dasharray="6,3" opacity=".7"/>
+            <text x="222" y="79" text-anchor="middle" font-family="monospace" font-size="9" fill="#4fffb0" id="g0droplbl">Zone de dépôt</text>
+            <text x="222" y="94" text-anchor="middle" font-family="monospace" font-size="8" fill="#3d5068" id="g0orlbl">ou cliquer</text>
+            <!-- Flèche 2 -->
+            <path d="M288 75 L340 75" stroke="#3d5068" stroke-width="1.3" marker-end="url(#a0)"/>
+            <text x="314" y="68" text-anchor="middle" font-family="monospace" font-size="8" fill="#7a8fa8" id="g0loadlbl">Chargé</text>
+            <!-- Tableau -->
+            <rect x="344" y="35" width="140" height="80" rx="8" fill="none" stroke="#00aaff" stroke-width="1.4" opacity=".7"/>
+            <rect x="344" y="35" width="140" height="18" rx="8" fill="#00aaff" opacity=".1"/>
+            <text x="414" y="48" text-anchor="middle" font-family="monospace" font-size="8" fill="#00aaff">Tableau de données</text>
+            <line x1="358" y1="67" x2="470" y2="67" stroke="#00aaff" stroke-width=".7" opacity=".3"/>
+            <line x1="358" y1="79" x2="470" y2="79" stroke="#00aaff" stroke-width=".7" opacity=".3"/>
+            <line x1="358" y1="91" x2="470" y2="91" stroke="#00aaff" stroke-width=".7" opacity=".3"/>
+            <line x1="358" y1="103" x2="470" y2="103" stroke="#00aaff" stroke-width=".7" opacity=".3"/>
+          </svg>
+        </div>
+        <ul class="g-steps">
+          <li id="g0l1"><span class="g-num">1</span><span>Glisse ton fichier <strong>.csv</strong> dans la zone de dépôt, ou clique sur le bouton <strong>Choisir un fichier</strong></span></li>
+          <li id="g0l2"><span class="g-num">2</span><span>Le tableau se charge instantanément — toutes les colonnes sont détectées automatiquement</span></li>
+          <li id="g0l3"><span class="g-num">3</span><span>Le fichier reste <strong>100% local</strong> — aucune donnée n'est envoyée sur un serveur</span></li>
+        </ul>
+      </div>
+
+      <!-- TAB 1 : Filtres -->
+      <div class="g-panel" id="gp1">
+        <p class="g-desc" id="g1desc">Filtre et recherche dans tes données en temps réel.</p>
+        <div class="g-schema">
+          <svg viewBox="0 0 500 145" xmlns="http://www.w3.org/2000/svg">
+            <!-- Champs filtres -->
+            <rect x="8" y="14" width="130" height="26" rx="6" fill="none" stroke="#4fffb0" stroke-width="1.2" opacity=".7"/>
+            <text x="18" y="31" font-family="monospace" font-size="8" fill="#4fffb0" id="g1s1lbl">Recherche globale</text>
+            <rect x="146" y="14" width="108" height="26" rx="6" fill="none" stroke="#00aaff" stroke-width="1.2" opacity=".7"/>
+            <text x="156" y="31" font-family="monospace" font-size="8" fill="#00aaff" id="g1s2lbl">Ville(s)</text>
+            <rect x="262" y="14" width="108" height="26" rx="6" fill="none" stroke="#7a8fa8" stroke-width="1.2"/>
+            <text x="272" y="31" font-family="monospace" font-size="8" fill="#7a8fa8" id="g1s3lbl">Colonne 3</text>
+            <rect x="378" y="14" width="110" height="26" rx="6" fill="none" stroke="#ff4d7e" stroke-width="1.2" opacity=".6"/>
+            <text x="388" y="31" font-family="monospace" font-size="8" fill="#ff4d7e" opacity=".8" id="g1s4lbl">Avec email</text>
+            <!-- Chips -->
+            <rect x="8" y="52" width="68" height="17" rx="8" fill="rgba(79,255,176,.07)" stroke="rgba(79,255,176,.25)" stroke-width="1"/>
+            <text x="42" y="64" text-anchor="middle" font-family="monospace" font-size="8" fill="#4fffb0">"Paris" ✕</text>
+            <rect x="82" y="52" width="78" height="17" rx="8" fill="rgba(79,255,176,.07)" stroke="rgba(79,255,176,.25)" stroke-width="1"/>
+            <text x="121" y="64" text-anchor="middle" font-family="monospace" font-size="8" fill="#4fffb0">"dupont@" ✕</text>
+            <!-- Résultats -->
+            <rect x="8" y="82" width="480" height="15" rx="3" fill="rgba(0,170,255,.05)" stroke="rgba(0,170,255,.12)" stroke-width="1"/>
+            <text x="18" y="93" font-family="monospace" font-size="8" fill="#00aaff">Dupont SARL — Paris — contact@dupont.fr</text>
+            <rect x="8" y="101" width="480" height="15" rx="3" fill="none" stroke="rgba(28,37,53,.5)" stroke-width="1"/>
+            <text x="18" y="112" font-family="monospace" font-size="8" fill="#3d5068">Martin Industries — Lyon — —</text>
+            <rect x="8" y="120" width="480" height="15" rx="3" fill="rgba(79,255,176,.02)" stroke="rgba(28,37,53,.5)" stroke-width="1"/>
+            <text x="18" y="131" font-family="monospace" font-size="8" fill="#3d5068">Bernard SAS — Paris — b@sas.com</text>
+            <text x="488" y="93" text-anchor="end" font-family="monospace" font-size="8" fill="#4fffb0">2 / 3</text>
+          </svg>
+        </div>
+        <ul class="g-steps">
+          <li id="g1l1"><span class="g-num">1</span><span><strong>Recherche globale</strong> — cherche dans toutes les colonnes simultanément</span></li>
+          <li id="g1l2"><span class="g-num">2</span><span><strong>Ville(s)</strong> — filtre par ville, plusieurs villes séparées par des virgules : <code>Paris, Lyon</code></span></li>
+          <li id="g1l3"><span class="g-num">3</span><span><strong>Chips actifs</strong> — clique sur un chip pour retirer ce filtre instantanément</span></li>
+          <li id="g1l4"><span class="g-num">4</span><span><strong>Tri</strong> — clique sur un en-tête de colonne pour trier par ordre croissant ou décroissant</span></li>
+        </ul>
+      </div>
+
+      <!-- TAB 2 : Export -->
+      <div class="g-panel" id="gp2">
+        <p class="g-desc" id="g2desc">Exporte tes données filtrées en CSV ou PDF.</p>
+        <div class="g-schema">
+          <svg viewBox="0 0 500 140" xmlns="http://www.w3.org/2000/svg">
+            <defs><marker id="a2" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#7a8fa8"/></marker></defs>
+            <!-- Tableau source -->
+            <rect x="8" y="20" width="148" height="96" rx="8" fill="none" stroke="#4fffb0" stroke-width="1.3" opacity=".6"/>
+            <rect x="8" y="20" width="148" height="18" rx="8" fill="#4fffb0" opacity=".1"/>
+            <text x="82" y="33" text-anchor="middle" font-family="monospace" font-size="8" fill="#4fffb0">Données filtrées</text>
+            <line x1="20" y1="52" x2="144" y2="52" stroke="#4fffb0" stroke-width=".8" opacity=".3"/>
+            <line x1="20" y1="65" x2="144" y2="65" stroke="#4fffb0" stroke-width=".8" opacity=".3"/>
+            <line x1="20" y1="78" x2="144" y2="78" stroke="#4fffb0" stroke-width=".8" opacity=".3"/>
+            <line x1="20" y1="91" x2="144" y2="91" stroke="#4fffb0" stroke-width=".8" opacity=".3"/>
+            <!-- Bouton CSV -->
+            <rect x="198" y="22" width="88" height="28" rx="7" fill="rgba(79,255,176,.08)" stroke="rgba(79,255,176,.25)" stroke-width="1.3"/>
+            <text x="242" y="40" text-anchor="middle" font-family="monospace" font-size="11" font-weight="bold" fill="#4fffb0">↓ CSV</text>
+            <!-- Bouton PDF -->
+            <rect x="198" y="62" width="88" height="28" rx="7" fill="rgba(255,77,126,.08)" stroke="rgba(255,77,126,.25)" stroke-width="1.3"/>
+            <text x="242" y="80" text-anchor="middle" font-family="monospace" font-size="11" font-weight="bold" fill="#ff4d7e">↓ PDF</text>
+            <!-- Badge PRO -->
+            <rect x="288" y="59" width="28" height="13" rx="6" fill="#ffd700"/>
+            <text x="302" y="69" text-anchor="middle" font-family="monospace" font-size="7" font-weight="bold" fill="#000">PRO</text>
+            <!-- Flèches -->
+            <path d="M292 36 L354 36" stroke="#3d5068" stroke-width="1.2" marker-end="url(#a2)"/>
+            <path d="M292 76 L354 76" stroke="#3d5068" stroke-width="1.2" marker-end="url(#a2)"/>
+            <!-- Résultats fichiers -->
+            <rect x="358" y="16" width="132" height="38" rx="7" fill="none" stroke="#4fffb0" stroke-width="1.3" opacity=".7"/>
+            <text x="390" y="32" font-family="monospace" font-size="9" fill="#4fffb0">export.csv</text>
+            <text x="390" y="46" font-family="monospace" font-size="7" fill="#3d5068">UTF-8 · toutes colonnes</text>
+            <rect x="358" y="58" width="132" height="38" rx="7" fill="none" stroke="#ff4d7e" stroke-width="1.3" opacity=".7"/>
+            <text x="390" y="74" font-family="monospace" font-size="9" fill="#ff4d7e">export.pdf</text>
+            <text x="390" y="88" font-family="monospace" font-size="7" fill="#3d5068">mise en page A4</text>
+          </svg>
+        </div>
+        <ul class="g-steps">
+          <li id="g2l1"><span class="g-num">1</span><span><strong>↓ CSV</strong> — exporte uniquement les lignes filtrées avec toutes les colonnes <span class="g-badge-pro">PRO</span></span></li>
+          <li id="g2l2"><span class="g-num">2</span><span><strong>↓ PDF</strong> — génère un rapport PDF mis en page, limité à 500 lignes <span class="g-badge-pro">PRO</span></span></li>
+          <li id="g2l3"><span class="g-num">3</span><span>Utilise le <strong>sélecteur de colonnes</strong> pour choisir quelles colonnes inclure dans l'export</span></li>
+        </ul>
+      </div>
+
+      <!-- TAB 3 : Pro -->
+      <div class="g-panel" id="gp3">
+        <p class="g-desc" id="g3desc">Débloquez l'accès illimité pour 4,99€/mois.</p>
+        <div class="g-schema">
+          <svg viewBox="0 0 500 130" xmlns="http://www.w3.org/2000/svg">
+            <defs><marker id="a3" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#ffd700"/></marker></defs>
+            <!-- Gratuit -->
+            <rect x="8" y="12" width="196" height="106" rx="10" fill="none" stroke="#3d5068" stroke-width="1.5"/>
+            <text x="106" y="34" text-anchor="middle" font-family="monospace" font-size="10" fill="#7a8fa8" id="g3free">Plan gratuit</text>
+            <text x="106" y="50" text-anchor="middle" font-family="monospace" font-size="9" fill="#3d5068">0€ / mois</text>
+            <text x="24" y="68" font-family="monospace" font-size="8" fill="#7a8fa8">+ Import CSV</text>
+            <text x="24" y="82" font-family="monospace" font-size="8" fill="#3d5068">— Limité à 200 lignes</text>
+            <text x="24" y="96" font-family="monospace" font-size="8" fill="#3d5068">— Export PDF désactivé</text>
+            <text x="24" y="110" font-family="monospace" font-size="8" fill="#3d5068">— Export CSV désactivé</text>
+            <!-- Flèche -->
+            <path d="M210 65 L252 65" stroke="#ffd700" stroke-width="2" marker-end="url(#a3)"/>
+            <text x="231" y="58" text-anchor="middle" font-family="monospace" font-size="8" fill="#ffd700" id="g3upgrade">Upgrade</text>
+            <!-- Pro -->
+            <rect x="256" y="12" width="236" height="106" rx="10" fill="rgba(255,215,0,.03)" stroke="#ffd700" stroke-width="1.5"/>
+            <text x="374" y="34" text-anchor="middle" font-family="monospace" font-size="10" font-weight="bold" fill="#ffd700" id="g3pro">Plan Pro</text>
+            <text x="374" y="50" text-anchor="middle" font-family="monospace" font-size="9" fill="#ffd700">4,99€ / mois</text>
+            <text x="272" y="68" font-family="monospace" font-size="8" fill="#4fffb0">+ Import CSV illimité</text>
+            <text x="272" y="82" font-family="monospace" font-size="8" fill="#4fffb0">+ Export CSV complet</text>
+            <text x="272" y="96" font-family="monospace" font-size="8" fill="#4fffb0">+ Export PDF professionnel</text>
+            <text x="272" y="110" font-family="monospace" font-size="8" fill="#4fffb0">+ Annulation à tout moment</text>
+          </svg>
+        </div>
+        <ul class="g-steps">
+          <li id="g3l1"><span class="g-num">1</span><span>Clique sur <strong>Pro 4,99€/mois</strong> en haut à droite de la page</span></li>
+          <li id="g3l2"><span class="g-num">2</span><span>Connecte-toi ou crée un compte — puis clique <strong>S'abonner</strong></span></li>
+          <li id="g3l3"><span class="g-num">3</span><span>Paiement sécurisé via <strong>Stripe</strong> — annulation possible à tout moment depuis ton profil</span></li>
+        </ul>
+        <button class="g-cta" id="gCtaBtn" onclick="closeGuide();openPro()">Passer Pro maintenant</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
 <script>
-// ══════════════════════════════════════════════════
-// I18N
-// ══════════════════════════════════════════════════
-const T = {
-  fr:{
-    dzTitle:'Importe ton fichier CSV',dzSub:'Glisse ton fichier ici ou clique pour parcourir.\nFonctionne avec n\'importe quel fichier CSV.',
-    dzBtn:'Choisir un fichier',dzFormats:'FORMAT ACCEPTÉ · CSV (UTF-8)',newFile:'Nouveau fichier',
-    statRows:'Total',statFiltered:'Filtrées',statCols:'Colonnes',
-    searchLbl:'Recherche globale',searchPh:'Toutes les colonnes…',
-    cityLbl:'Ville(s)',cityPh:'Lille, Paris, Lyon…',col3Lbl:'Colonne 3',
-    emailOnly:'Avec email',exportCSV:'CSV',exportPDF:'PDF',colPicker:'Colonnes',
-    results:(n,t)=>`${n} résultat${n>1?'s':''} sur ${t}`,noResults:'Aucun résultat.',
-    pdfTitle:'Export CSV Filter.io',toastCSV:'CSV exporté',toastPDF:'PDF généré',
-    toastLoaded:(n)=>`${n} lignes chargées`,
-    proBtn:'Pro 4,99€/mois',proActive:'Pro actif',
-    proSub:'Débloquez toutes les fonctionnalités',proPrice:'4,99€',proPerMonth:'/ mois',
-    f1:'Import CSV illimité (sans limite de lignes)',f2:'Export PDF professionnel',
-    f3:'Export CSV complet avec tous les champs',f4:'Filtres avancés multi-colonnes',
-    f5:'Sélecteur de colonnes',f6:'Annulation à tout moment',
-    limitText:(n,m)=>`Version gratuite — ${n} lignes détectées, ${m} affichées.`,
-    limitBtn:'Passer Pro',
-    loginBtn:'Connexion',createBtn:'Créer un compte',
-  },
-  en:{
-    dzTitle:'Import your CSV file',dzSub:'Drag & drop here or click to browse.\nWorks with any CSV file.',
-    dzBtn:'Choose a file',dzFormats:'ACCEPTED FORMAT · CSV (UTF-8)',newFile:'New file',
-    statRows:'Total',statFiltered:'Filtered',statCols:'Columns',
-    searchLbl:'Global search',searchPh:'Search all columns…',
-    cityLbl:'City / Cities',cityPh:'London, Paris, NYC…',col3Lbl:'Column 3',
-    emailOnly:'With email',exportCSV:'CSV',exportPDF:'PDF',colPicker:'Columns',
-    results:(n,t)=>`${n} result${n>1?'s':''} of ${t}`,noResults:'No results found.',
-    pdfTitle:'CSV Filter.io Export',toastCSV:'CSV exported',toastPDF:'PDF generated',
-    toastLoaded:(n)=>`${n} rows loaded`,
-    proBtn:'Pro 4.99€/mo',proActive:'Pro active',
-    proSub:'Unlock all features',proPrice:'4.99€',proPerMonth:'/ month',
-    f1:'Unlimited CSV import',f2:'Professional PDF export',
-    f3:'Full CSV export with all fields',f4:'Advanced multi-column filters',
-    f5:'Column selector',f6:'Cancel anytime',
-    limitText:(n,m)=>`Free plan — ${n} rows detected, showing ${m}.`,
-    limitBtn:'Upgrade to Pro',
-    loginBtn:'Sign in',createBtn:'Create account',
-  },
-  es:{
-    dzTitle:'Importa tu archivo CSV',dzSub:'Arrastra aquí o haz clic para buscar.\nFunciona con cualquier CSV.',
-    dzBtn:'Elegir archivo',dzFormats:'FORMATO ACEPTADO · CSV (UTF-8)',newFile:'Nuevo archivo',
-    statRows:'Total',statFiltered:'Filtradas',statCols:'Columnas',
-    searchLbl:'Búsqueda global',searchPh:'Buscar en todas las columnas…',
-    cityLbl:'Ciudad(es)',cityPh:'Madrid, Barcelona…',col3Lbl:'Columna 3',
-    emailOnly:'Con email',exportCSV:'CSV',exportPDF:'PDF',colPicker:'Columnas',
-    results:(n,t)=>`${n} resultado${n>1?'s':''} de ${t}`,noResults:'Sin resultados.',
-    pdfTitle:'Exportación CSV Filter.io',toastCSV:'CSV exportado',toastPDF:'PDF generado',
-    toastLoaded:(n)=>`${n} filas cargadas`,
-    proBtn:'Pro 4,99€/mes',proActive:'Pro activo',
-    proSub:'Desbloquea todas las funciones',proPrice:'4,99€',proPerMonth:'/ mes',
-    f1:'Importación CSV ilimitada',f2:'Exportación PDF profesional',
-    f3:'Exportación CSV completa',f4:'Filtros avanzados multi-columna',
-    f5:'Selector de columnas',f6:'Cancela cuando quieras',
-    limitText:(n,m)=>`Plan gratuito — ${n} filas detectadas, mostrando ${m}.`,
-    limitBtn:'Pasar a Pro',
-    loginBtn:'Iniciar sesión',createBtn:'Crear cuenta',
-  },
-  zh:{
-    dzTitle:'导入您的 CSV 文件',dzSub:'拖放文件到此处或点击浏览。\n支持任何 CSV 文件。',
-    dzBtn:'选择文件',dzFormats:'支持格式 · CSV (UTF-8)',newFile:'新文件',
-    statRows:'总行数',statFiltered:'已筛选',statCols:'列数',
-    searchLbl:'全局搜索',searchPh:'搜索所有列…',
-    cityLbl:'城市',cityPh:'北京, 上海…',col3Lbl:'第3列',
-    emailOnly:'含邮箱',exportCSV:'CSV',exportPDF:'PDF',colPicker:'列设置',
-    results:(n,t)=>`共 ${t} 条，显示 ${n} 条`,noResults:'未找到结果。',
-    pdfTitle:'CSV Filter.io 导出',toastCSV:'CSV 已导出',toastPDF:'PDF 已生成',
-    toastLoaded:(n)=>`已加载 ${n} 行`,
-    proBtn:'Pro 4.99€/月',proActive:'Pro 已激活',
-    proSub:'解锁所有功能',proPrice:'4.99€',proPerMonth:'/ 月',
-    f1:'无限制 CSV 导入',f2:'专业 PDF 导出',
-    f3:'完整 CSV 导出',f4:'多列高级筛选',
-    f5:'列选择器',f6:'随时取消',
-    limitText:(n,m)=>`免费版 — 检测到 ${n} 行，显示 ${m} 行。`,
-    limitBtn:'升级到 Pro',
-    loginBtn:'登录',createBtn:'创建账户',
-  }
+// ══ I18N ══
+const T={
+  fr:{dzTitle:'Importe ton fichier CSV',dzSub:'Glisse ton fichier ici ou clique pour parcourir.\nFonctionne avec n\'importe quel fichier CSV.',dzBtn:'Choisir un fichier',dzFormats:'FORMAT ACCEPTÉ · CSV (UTF-8)',newFile:'Nouveau fichier',statRows:'Total',statFiltered:'Filtrées',statCols:'Colonnes',searchLbl:'Recherche globale',searchPh:'Toutes les colonnes…',cityLbl:'Ville(s)',cityPh:'Lille, Paris…',col3Lbl:'Colonne 3',emailOnly:'Avec email',exportCSV:'CSV',exportPDF:'PDF',colPicker:'Colonnes',results:(n,t)=>`${n} résultat${n>1?'s':''} sur ${t}`,noResults:'Aucun résultat.',pdfTitle:'Export CSV Filter.io',toastCSV:'CSV exporté',toastPDF:'PDF généré',toastLoaded:(n)=>`${n} lignes chargées`,proBtn:'Pro 4,99€/mois',proActive:'Pro actif',proSub:'Débloquez toutes les fonctionnalités',proPrice:'4,99€',proPerMonth:'/ mois',f1:'Import CSV illimité (sans limite de lignes)',f2:'Export PDF professionnel',f3:'Export CSV complet avec tous les champs',f4:'Filtres avancés multi-colonnes',f5:'Sélecteur de colonnes',f6:'Annulation à tout moment',limitText:(n,m)=>`Version gratuite — ${n} lignes détectées, ${m} affichées.`,limitBtn:'Passer Pro',loginBtn:'Connexion',createBtn:'Créer un compte',
+  guide:{title:'Guide d\'utilisation',tabs:['Import','Filtres','Export','Pro'],g0:{desc:'Importe n\'importe quel fichier CSV en quelques secondes.',step1:'Glisser-déposer',drop:'Zone de dépôt',or:'ou cliquer',load:'Chargé',l1:'Glisse ton fichier <strong>.csv</strong> dans la zone de dépôt, ou clique sur <strong>Choisir un fichier</strong>',l2:'Le tableau se charge instantanément — colonnes détectées automatiquement',l3:'Le fichier reste <strong>100% local</strong> — aucune donnée envoyée sur un serveur'},g1:{desc:'Filtre et recherche dans tes données en temps réel.',s1:'Recherche globale',s2:'Ville(s)',s3:'Colonne 3',s4:'Avec email',l1:'<strong>Recherche globale</strong> — cherche dans toutes les colonnes simultanément',l2:'<strong>Ville(s)</strong> — plusieurs villes séparées par des virgules : <code>Paris, Lyon</code>',l3:'<strong>Chips actifs</strong> — clique sur un chip pour retirer un filtre',l4:'<strong>Tri</strong> — clique sur un en-tête de colonne pour trier'},g2:{desc:'Exporte tes données filtrées en CSV ou PDF.',l1:'<strong>↓ CSV</strong> — exporte les lignes filtrées avec toutes les colonnes <span class="g-badge-pro">PRO</span>',l2:'<strong>↓ PDF</strong> — rapport PDF mis en page, jusqu\'à 500 lignes <span class="g-badge-pro">PRO</span>',l3:'Utilise le <strong>sélecteur de colonnes</strong> pour choisir les colonnes à inclure'},g3:{desc:'Débloquez l\'accès illimité pour 4,99€/mois.',free:'Plan gratuit',upgrade:'Upgrade',pro:'Plan Pro',l1:'Clique sur <strong>Pro 4,99€/mois</strong> en haut à droite',l2:'Connecte-toi ou crée un compte — puis clique <strong>S\'abonner</strong>',l3:'Paiement sécurisé via <strong>Stripe</strong> — annulation depuis ton profil',cta:'Passer Pro maintenant'}}},
+  en:{dzTitle:'Import your CSV file',dzSub:'Drag & drop here or click to browse.\nWorks with any CSV file.',dzBtn:'Choose a file',dzFormats:'ACCEPTED FORMAT · CSV (UTF-8)',newFile:'New file',statRows:'Total',statFiltered:'Filtered',statCols:'Columns',searchLbl:'Global search',searchPh:'Search all columns…',cityLbl:'City / Cities',cityPh:'London, Paris…',col3Lbl:'Column 3',emailOnly:'With email',exportCSV:'CSV',exportPDF:'PDF',colPicker:'Columns',results:(n,t)=>`${n} result${n>1?'s':''} of ${t}`,noResults:'No results found.',pdfTitle:'CSV Filter.io Export',toastCSV:'CSV exported',toastPDF:'PDF generated',toastLoaded:(n)=>`${n} rows loaded`,proBtn:'Pro €4.99/mo',proActive:'Pro active',proSub:'Unlock all features',proPrice:'4.99€',proPerMonth:'/ month',f1:'Unlimited CSV import',f2:'Professional PDF export',f3:'Full CSV export with all fields',f4:'Advanced multi-column filters',f5:'Column selector',f6:'Cancel anytime',limitText:(n,m)=>`Free plan — ${n} rows detected, showing ${m}.`,limitBtn:'Upgrade to Pro',loginBtn:'Sign in',createBtn:'Create account',
+  guide:{title:'User Guide',tabs:['Import','Filters','Export','Pro'],g0:{desc:'Import any CSV file in seconds.',step1:'Drag & drop',drop:'Drop zone',or:'or click',load:'Loaded',l1:'Drag your <strong>.csv</strong> file to the drop zone, or click <strong>Choose a file</strong>',l2:'The table loads instantly — all columns detected automatically',l3:'Your file stays <strong>100% local</strong> — no data sent to a server'},g1:{desc:'Filter and search your data in real time.',s1:'Global search',s2:'City / Cities',s3:'Column 3',s4:'With email',l1:'<strong>Global search</strong> — searches all columns at once',l2:'<strong>City</strong> — multiple cities separated by commas: <code>Paris, Lyon</code>',l3:'<strong>Active chips</strong> — click a chip to remove that filter',l4:'<strong>Sort</strong> — click a column header to sort ascending or descending'},g2:{desc:'Export your filtered data as CSV or PDF.',l1:'<strong>↓ CSV</strong> — exports filtered rows with all columns <span class="g-badge-pro">PRO</span>',l2:'<strong>↓ PDF</strong> — formatted PDF report, up to 500 rows <span class="g-badge-pro">PRO</span>',l3:'Use the <strong>column selector</strong> to choose which columns to include'},g3:{desc:'Unlock unlimited access for €4.99/month.',free:'Free plan',upgrade:'Upgrade',pro:'Pro plan',l1:'Click <strong>Pro €4.99/mo</strong> at the top right',l2:'Sign in or create an account — then click <strong>Subscribe</strong>',l3:'Secure payment via <strong>Stripe</strong> — cancel anytime from your profile',cta:'Go Pro now'}}},
+  es:{dzTitle:'Importa tu archivo CSV',dzSub:'Arrastra aquí o haz clic para buscar.\nFunciona con cualquier CSV.',dzBtn:'Elegir archivo',dzFormats:'FORMATO ACEPTADO · CSV (UTF-8)',newFile:'Nuevo archivo',statRows:'Total',statFiltered:'Filtradas',statCols:'Columnas',searchLbl:'Búsqueda global',searchPh:'Buscar en todas las columnas…',cityLbl:'Ciudad(es)',cityPh:'Madrid, Barcelona…',col3Lbl:'Columna 3',emailOnly:'Con email',exportCSV:'CSV',exportPDF:'PDF',colPicker:'Columnas',results:(n,t)=>`${n} resultado${n>1?'s':''} de ${t}`,noResults:'Sin resultados.',pdfTitle:'Exportación CSV Filter.io',toastCSV:'CSV exportado',toastPDF:'PDF generado',toastLoaded:(n)=>`${n} filas cargadas`,proBtn:'Pro 4,99€/mes',proActive:'Pro activo',proSub:'Desbloquea todas las funciones',proPrice:'4,99€',proPerMonth:'/ mes',f1:'Importación CSV ilimitada',f2:'Exportación PDF profesional',f3:'Exportación CSV completa',f4:'Filtros avanzados multi-columna',f5:'Selector de columnas',f6:'Cancela cuando quieras',limitText:(n,m)=>`Plan gratuito — ${n} filas detectadas, mostrando ${m}.`,limitBtn:'Pasar a Pro',loginBtn:'Iniciar sesión',createBtn:'Crear cuenta',
+  guide:{title:'Guía de uso',tabs:['Importar','Filtros','Exportar','Pro'],g0:{desc:'Importa cualquier archivo CSV en segundos.',step1:'Arrastrar',drop:'Zona de soltar',or:'o hacer clic',load:'Cargado',l1:'Arrastra tu archivo <strong>.csv</strong> a la zona, o haz clic en <strong>Elegir archivo</strong>',l2:'La tabla carga al instante — columnas detectadas automáticamente',l3:'Tu archivo permanece <strong>100% local</strong> — sin datos enviados al servidor'},g1:{desc:'Filtra y busca en tus datos en tiempo real.',s1:'Búsqueda global',s2:'Ciudad(es)',s3:'Columna 3',s4:'Con email',l1:'<strong>Búsqueda global</strong> — busca en todas las columnas',l2:'<strong>Ciudad</strong> — varias ciudades separadas por comas: <code>Madrid, Barcelona</code>',l3:'<strong>Chips activos</strong> — clic para eliminar un filtro',l4:'<strong>Ordenar</strong> — clic en el encabezado de columna para ordenar'},g2:{desc:'Exporta tus datos filtrados en CSV o PDF.',l1:'<strong>↓ CSV</strong> — exporta las filas filtradas con todas las columnas <span class="g-badge-pro">PRO</span>',l2:'<strong>↓ PDF</strong> — informe PDF, hasta 500 filas <span class="g-badge-pro">PRO</span>',l3:'Usa el <strong>selector de columnas</strong> para elegir qué columnas incluir'},g3:{desc:'Desbloquea acceso ilimitado por 4,99€/mes.',free:'Plan gratuito',upgrade:'Mejorar',pro:'Plan Pro',l1:'Haz clic en <strong>Pro 4,99€/mes</strong> arriba a la derecha',l2:'Inicia sesión o crea una cuenta — luego clic en <strong>Suscribirse</strong>',l3:'Pago seguro con <strong>Stripe</strong> — cancela cuando quieras',cta:'Ir a Pro ahora'}}},
+  zh:{dzTitle:'导入您的 CSV 文件',dzSub:'拖放文件到此处或点击浏览。\n支持任何 CSV 文件。',dzBtn:'选择文件',dzFormats:'支持格式 · CSV (UTF-8)',newFile:'新文件',statRows:'总行数',statFiltered:'已筛选',statCols:'列数',searchLbl:'全局搜索',searchPh:'搜索所有列…',cityLbl:'城市',cityPh:'北京, 上海…',col3Lbl:'第3列',emailOnly:'含邮箱',exportCSV:'CSV',exportPDF:'PDF',colPicker:'列设置',results:(n,t)=>`共 ${t} 条，显示 ${n} 条`,noResults:'未找到结果。',pdfTitle:'CSV Filter.io 导出',toastCSV:'CSV 已导出',toastPDF:'PDF 已生成',toastLoaded:(n)=>`已加载 ${n} 行`,proBtn:'Pro 4.99€/月',proActive:'Pro 已激活',proSub:'解锁所有功能',proPrice:'4.99€',proPerMonth:'/ 月',f1:'无限制 CSV 导入',f2:'专业 PDF 导出',f3:'完整 CSV 导出',f4:'多列高级筛选',f5:'列选择器',f6:'随时取消',limitText:(n,m)=>`免费版 — 检测到 ${n} 行，显示 ${m} 行。`,limitBtn:'升级到 Pro',loginBtn:'登录',createBtn:'创建账户',
+  guide:{title:'使用指南',tabs:['导入','筛选','导出','Pro'],g0:{desc:'几秒内导入任何 CSV 文件。',step1:'拖拽',drop:'拖放区域',or:'或点击',load:'已加载',l1:'将 <strong>.csv</strong> 文件拖到拖放区域，或点击<strong>选择文件</strong>',l2:'表格即时加载 — 自动检测所有列',l3:'文件保持 <strong>100% 本地</strong> — 不上传到服务器'},g1:{desc:'实时筛选和搜索数据。',s1:'全局搜索',s2:'城市',s3:'第3列',s4:'含邮箱',l1:'<strong>全局搜索</strong> — 同时搜索所有列',l2:'<strong>城市</strong> — 多个城市用逗号分隔：<code>北京, 上海</code>',l3:'<strong>活动标签</strong> — 点击删除筛选条件',l4:'<strong>排序</strong> — 点击列标题进行排序'},g2:{desc:'将筛选后的数据导出为 CSV 或 PDF。',l1:'<strong>↓ CSV</strong> — 导出筛选行和所有列 <span class="g-badge-pro">PRO</span>',l2:'<strong>↓ PDF</strong> — 格式化 PDF 报告，最多 500 行 <span class="g-badge-pro">PRO</span>',l3:'使用<strong>列选择器</strong>选择要包含的列'},g3:{desc:'解锁无限制访问，每月 4.99€。',free:'免费计划',upgrade:'升级',pro:'Pro 计划',l1:'点击右上角的 <strong>Pro 4.99€/月</strong>',l2:'登录或创建账户 — 然后点击<strong>立即订阅</strong>',l3:'通过 <strong>Stripe</strong> 安全支付 — 随时取消',cta:'立即升级 Pro'}}}
 };
 
 let lang='fr';
@@ -593,182 +705,129 @@ function tr(k,...a){const v=T[lang][k];return typeof v==='function'?v(...a):(v||
 
 function setLang(l){
   lang=l;
-  document.getElementById('dzTitle').textContent=tr('dzTitle');
-  document.getElementById('dzSub').innerHTML=tr('dzSub').replace('\n','<br>');
-  document.getElementById('dzBtn').textContent=tr('dzBtn');
-  document.getElementById('dzFormats').textContent=tr('dzFormats');
-  document.getElementById('newFileTxt').textContent=tr('newFile');
-  document.getElementById('statRowsLbl').textContent=tr('statRows');
-  document.getElementById('statFilteredLbl').textContent=tr('statFiltered');
-  document.getElementById('statColsLbl').textContent=tr('statCols');
-  document.getElementById('searchLbl').textContent=tr('searchLbl');
-  document.getElementById('globalSearch').placeholder=tr('searchPh');
-  document.getElementById('cityLbl').textContent=tr('cityLbl');
-  document.getElementById('citySearch').placeholder=tr('cityPh');
-  document.getElementById('col3Lbl').textContent=tr('col3Lbl');
-  document.getElementById('emailOnlyLbl').textContent=tr('emailOnly');
-  document.getElementById('exportCSVLbl').textContent=tr('exportCSV');
-  document.getElementById('exportPDFLbl').textContent=tr('exportPDF');
-  document.getElementById('colPickerBtn').textContent=tr('colPicker');
-  document.getElementById('proSub').textContent=tr('proSub');
-  document.getElementById('proPrice').innerHTML=tr('proPrice')+' <span id="proPerMonth">'+tr('proPerMonth')+'</span>';
-  ['f1','f2','f3','f4','f5','f6'].forEach(id=>document.getElementById(id).textContent=tr(id));
-  document.getElementById('limitBtn').textContent=tr('limitBtn');
-  document.getElementById('tabLogin').textContent=tr('loginBtn');
-  document.getElementById('tabRegister').textContent=tr('createBtn');
-  if(document.getElementById('limitBanner').classList.contains('show')&&allRows.length)
-    document.getElementById('limitText').textContent=tr('limitText',allRows.length,FREE_LIMIT);
+  const s=id=>document.getElementById(id);
+  s('dzTitle').textContent=tr('dzTitle');
+  s('dzSub').innerHTML=tr('dzSub').replace('\n','<br>');
+  s('dzBtn').textContent=tr('dzBtn');
+  s('dzFormats').textContent=tr('dzFormats');
+  s('newFileTxt').textContent=tr('newFile');
+  s('statRowsLbl').textContent=tr('statRows');
+  s('statFilteredLbl').textContent=tr('statFiltered');
+  s('statColsLbl').textContent=tr('statCols');
+  s('searchLbl').textContent=tr('searchLbl');
+  s('globalSearch').placeholder=tr('searchPh');
+  s('cityLbl').textContent=tr('cityLbl');
+  s('citySearch').placeholder=tr('cityPh');
+  s('col3Lbl').textContent=tr('col3Lbl');
+  s('emailOnlyLbl').textContent=tr('emailOnly');
+  s('exportCSVLbl').textContent=tr('exportCSV');
+  s('exportPDFLbl').textContent=tr('exportPDF');
+  s('colPickerBtn').textContent=tr('colPicker');
+  s('proSub').textContent=tr('proSub');
+  s('proPrice').innerHTML=tr('proPrice')+' <span id="proPerMonth">'+tr('proPerMonth')+'</span>';
+  ['f1','f2','f3','f4','f5','f6'].forEach(id=>s(id).textContent=tr(id));
+  s('limitBtn').textContent=tr('limitBtn');
+  s('tabLogin').textContent=tr('loginBtn');
+  s('tabRegister').textContent=tr('createBtn');
+  if(s('limitBanner').classList.contains('show')&&allRows.length)
+    s('limitText').textContent=tr('limitText',allRows.length,FREE_LIMIT);
   updateProBtn();
   if(allRows.length)updateInfo();
+  updateGuideTranslations();
 }
 
-// ══════════════════════════════════════════════════
+// GUIDE translations
+function updateGuideTranslations(){
+  const g=T[lang]?.guide||T['fr'].guide;
+  const s=id=>document.getElementById(id);
+  if(!s('gTitle'))return;
+  s('gTitle').textContent=g.title;
+  g.tabs.forEach((t,i)=>{if(s('gt'+i+'lbl'))s('gt'+i+'lbl').textContent=t;});
+  // Tab 0
+  s('g0desc').textContent=g.g0.desc;
+  s('g0step1lbl').textContent=g.g0.step1;
+  s('g0droplbl').textContent=g.g0.drop;
+  s('g0orlbl').textContent=g.g0.or;
+  s('g0loadlbl').textContent=g.g0.load;
+  ['l1','l2','l3'].forEach(k=>{const el=s('g0'+k);if(el)el.querySelector('span:last-child').innerHTML=g.g0[k];});
+  // Tab 1
+  s('g1desc').textContent=g.g1.desc;
+  ['s1','s2','s3','s4'].forEach(k=>{if(s('g1'+k+'lbl'))s('g1'+k+'lbl').textContent=g.g1[k];});
+  ['l1','l2','l3','l4'].forEach(k=>{const el=s('g1'+k);if(el)el.querySelector('span:last-child').innerHTML=g.g1[k];});
+  // Tab 2
+  s('g2desc').textContent=g.g2.desc;
+  ['l1','l2','l3'].forEach(k=>{const el=s('g2'+k);if(el)el.querySelector('span:last-child').innerHTML=g.g2[k];});
+  // Tab 3
+  s('g3desc').textContent=g.g3.desc;
+  if(s('g3free'))s('g3free').textContent=g.g3.free;
+  if(s('g3upgrade'))s('g3upgrade').textContent=g.g3.upgrade;
+  if(s('g3pro'))s('g3pro').textContent=g.g3.pro;
+  ['l1','l2','l3'].forEach(k=>{const el=s('g3'+k);if(el)el.querySelector('span:last-child').innerHTML=g.g3[k];});
+  if(s('gCtaBtn'))s('gCtaBtn').textContent=g.g3.cta;
+}
+
+// GUIDE modal
+function openGuide(){document.getElementById('guideOverlay').classList.add('open');showGuideTab(0);}
+function closeGuide(){document.getElementById('guideOverlay').classList.remove('open');}
+function showGuideTab(i){
+  document.querySelectorAll('.g-tab').forEach((t,idx)=>t.classList.toggle('active',idx===i));
+  document.querySelectorAll('.g-panel').forEach((p,idx)=>p.classList.toggle('active',idx===i));
+}
+
 // THEME
-// ══════════════════════════════════════════════════
 function toggleTheme(){
-  const light=document.body.classList.toggle('light');
-  document.getElementById('themeBtn').textContent=light?'🌑':'🌙';
-  localStorage.setItem('fio-theme',light?'light':'dark');
+  const l=document.body.classList.toggle('light');
+  document.getElementById('themeBtn').textContent=l?'🌑':'🌙';
+  localStorage.setItem('fio-theme',l?'light':'dark');
 }
-if(localStorage.getItem('fio-theme')==='light'){
-  document.body.classList.add('light');
-  document.getElementById('themeBtn').textContent='🌑';
-}
+if(localStorage.getItem('fio-theme')==='light'){document.body.classList.add('light');document.getElementById('themeBtn').textContent='🌑';}
 
-// ══════════════════════════════════════════════════
-// PAGE NAVIGATION
-// ══════════════════════════════════════════════════
+// PAGE NAV
 function showPage(name){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.getElementById('page'+name.charAt(0).toUpperCase()+name.slice(1)).classList.add('active');
+  document.getElementById('page'+name[0].toUpperCase()+name.slice(1)).classList.add('active');
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
-  const nb=document.getElementById('nav'+name.charAt(0).toUpperCase()+name.slice(1));
+  const nb=document.getElementById('nav'+name[0].toUpperCase()+name.slice(1));
   if(nb)nb.classList.add('active');
   if(name==='profile')refreshProfilePage();
 }
 
-// ══════════════════════════════════════════════════
-// PRO SYSTEM — Stripe
-// ══════════════════════════════════════════════════
-let isPro=false; // Toujours vérifier depuis Supabase, ne pas faire confiance au localStorage seul
-
+// PRO
+let isPro=false;
 function updateProBtn(){
   const btn=document.getElementById('btnPro');
-  if(isPro){
-    btn.textContent='✓ '+tr('proActive');
-    btn.style.background='linear-gradient(135deg,var(--accent),var(--accent2))';
-    btn.classList.add('active');
-  } else {
-    btn.textContent=tr('proBtn');
-    btn.style.background='';
-    btn.classList.remove('active');
-  }
+  if(isPro){btn.textContent='✓ '+tr('proActive');btn.style.background='linear-gradient(135deg,var(--accent),var(--accent2))';btn.classList.add('active');}
+  else{btn.textContent=tr('proBtn');btn.style.background='';btn.classList.remove('active');}
 }
-
-function openPro(){
-  document.getElementById('proOverlay').classList.add('open');
-  syncProModal();
-}
+function openPro(){document.getElementById('proOverlay').classList.add('open');syncProModal();}
 function closePro(){document.getElementById('proOverlay').classList.remove('open');}
-
 function syncProModal(){
-  const stepAuth=document.getElementById('proStepAuth');
-  const stepCheckout=document.getElementById('proStepCheckout');
-  if(currentUser){
-    stepAuth.classList.remove('active');
-    stepCheckout.classList.add('active');
-    document.getElementById('proAvatar').textContent=(currentUser.email||'?')[0].toUpperCase();
-    document.getElementById('proUserEmail').textContent=currentUser.email||'';
-  } else {
-    stepAuth.classList.add('active');
-    stepCheckout.classList.remove('active');
-    document.getElementById('proAuthMsg').textContent='';
-  }
+  const sa=document.getElementById('proStepAuth'),sc=document.getElementById('proStepCheckout');
+  if(currentUser){sa.classList.remove('active');sc.classList.add('active');document.getElementById('proAvatar').textContent=(currentUser.email||'?')[0].toUpperCase();document.getElementById('proUserEmail').textContent=currentUser.email||'';}
+  else{sa.classList.add('active');sc.classList.remove('active');document.getElementById('proAuthMsg').textContent='';}
 }
-
-// ── Stripe Checkout ──
 async function goToPro(){
   if(!currentUser){openAuth('login');return;}
   const btn=document.getElementById('btnCheckout');
-  btn.disabled=true;
-  btn.textContent='Redirection…';
+  btn.disabled=true;btn.textContent='Redirection…';
   try{
-    const res=await fetch('/.netlify/functions/create-checkout',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({userId:currentUser.id,email:currentUser.email})
-    });
-    const {url,error}=await res.json();
+    const res=await fetch('/.netlify/functions/create-checkout',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({userId:currentUser.id,email:currentUser.email})});
+    const{url,error}=await res.json();
     if(error){toast('Erreur : '+error,'error');btn.disabled=false;btn.textContent="S'abonner maintenant — 4,99€/mois";return;}
     window.location.href=url;
-  }catch(e){
-    toast('Erreur réseau','error');
-    btn.disabled=false;
-    btn.textContent="S'abonner maintenant — 4,99€/mois";
-  }
+  }catch(e){toast('Erreur réseau','error');btn.disabled=false;btn.textContent="S'abonner maintenant — 4,99€/mois";}
 }
-
-// ── Stripe Customer Portal ──
 async function openCustomerPortal(){
   if(!currentUser)return;
   try{
     const{data}=await sb.from('profiles').select('stripe_customer_id').eq('id',currentUser.id).single();
-    if(!data?.stripe_customer_id){toast('Aucun abonnement actif trouvé.','error');return;}
-    const res=await fetch('/.netlify/functions/customer-portal',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({stripeCustomerId:data.stripe_customer_id})
-    });
-    const {url,error}=await res.json();
+    if(!data?.stripe_customer_id){toast('Aucun abonnement actif.','error');return;}
+    const res=await fetch('/.netlify/functions/customer-portal',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({stripeCustomerId:data.stripe_customer_id})});
+    const{url,error}=await res.json();
     if(error){toast('Erreur : '+error,'error');return;}
     window.location.href=url;
-  }catch(e){
-    toast('Erreur réseau','error');
-  }
+  }catch(e){toast('Erreur réseau','error');}
 }
-
-function togglePwdForm(){
-  const c=document.getElementById('pwdFormContainer');
-  const open=c.style.display==='none'||c.style.display==='';
-  c.style.display=open?'block':'none';
-  document.getElementById('pwdToggleBtn').textContent=open?'Annuler':'Changer le mot de passe';
-  if(open)setTimeout(()=>document.getElementById('newPwd').focus(),50);
-}
-
-async function changePassword(){
-  const pwd=document.getElementById('newPwd').value;
-  const confirm=document.getElementById('confirmPwd').value;
-  const msg=document.getElementById('pwdMsg');
-  const btn=document.getElementById('pwdSubmitBtn');
-  if(!pwd){msg.textContent='Entrez un nouveau mot de passe.';msg.className='form-msg error';return;}
-  if(pwd.length<6){msg.textContent='Minimum 6 caractères.';msg.className='form-msg error';return;}
-  if(pwd!==confirm){msg.textContent='Les mots de passe ne correspondent pas.';msg.className='form-msg error';return;}
-  btn.disabled=true;btn.textContent='…';
-  const{error}=await sb.auth.updateUser({password:pwd});
-  btn.disabled=false;btn.textContent='Mettre à jour';
-  if(error){msg.textContent='Erreur : '+error.message;msg.className='form-msg error';}
-  else{
-    msg.textContent='Mot de passe mis à jour !';msg.className='form-msg success';
-    document.getElementById('newPwd').value='';
-    document.getElementById('confirmPwd').value='';
-    setTimeout(()=>{togglePwdForm();msg.textContent='';},2000);
-  }
-}
-
-function refreshProfilePage(){
-  if(!currentUser)return;
-  const email=currentUser.email||'';
-  document.getElementById('phAvatar').textContent=email[0]?.toUpperCase()||'?';
-  document.getElementById('phName').textContent=email.split('@')[0]||'—';
-  document.getElementById('phEmail').textContent=email;
-  document.getElementById('phBadge').innerHTML=isPro
-    ?'<span class="badge-pro">✓ Pro actif</span>'
-    :'<span class="badge-free">Plan gratuit</span>';
-  document.getElementById('prRowFree').style.display=isPro?'none':'flex';
-  document.getElementById('prRowPro').style.display=isPro?'flex':'none';
-  document.getElementById('prRowCancel').style.display=isPro?'flex':'none';
-}
-
 function applyFreeLimit(rows){
   if(isPro)return rows;
   if(rows.length>FREE_LIMIT){
@@ -780,35 +839,51 @@ function applyFreeLimit(rows){
   document.getElementById('limitBanner').classList.remove('show');
   return rows;
 }
+function togglePwdForm(){
+  const c=document.getElementById('pwdFormContainer'),open=c.style.display==='none'||!c.style.display;
+  c.style.display=open?'block':'none';
+  document.getElementById('pwdToggleBtn').textContent=open?'Annuler':'Changer le mot de passe';
+  if(open)setTimeout(()=>document.getElementById('newPwd').focus(),50);
+}
+async function changePassword(){
+  const pwd=document.getElementById('newPwd').value,confirm=document.getElementById('confirmPwd').value;
+  const msg=document.getElementById('pwdMsg'),btn=document.getElementById('pwdSubmitBtn');
+  if(!pwd){msg.textContent='Entrez un nouveau mot de passe.';msg.className='form-msg error';return;}
+  if(pwd.length<6){msg.textContent='Minimum 6 caractères.';msg.className='form-msg error';return;}
+  if(pwd!==confirm){msg.textContent='Les mots de passe ne correspondent pas.';msg.className='form-msg error';return;}
+  btn.disabled=true;btn.textContent='…';
+  const{error}=await sb.auth.updateUser({password:pwd});
+  btn.disabled=false;btn.textContent='Mettre à jour';
+  if(error){msg.textContent='Erreur : '+error.message;msg.className='form-msg error';}
+  else{msg.textContent='Mot de passe mis à jour !';msg.className='form-msg success';document.getElementById('newPwd').value='';document.getElementById('confirmPwd').value='';setTimeout(()=>{togglePwdForm();msg.textContent='';},2000);}
+}
+function refreshProfilePage(){
+  if(!currentUser)return;
+  const email=currentUser.email||'';
+  document.getElementById('phAvatar').textContent=email[0]?.toUpperCase()||'?';
+  document.getElementById('phName').textContent=email.split('@')[0]||'—';
+  document.getElementById('phEmail').textContent=email;
+  document.getElementById('phBadge').innerHTML=isPro?'<span class="badge-pro">✓ Pro actif</span>':'<span class="badge-free">Plan gratuit</span>';
+  document.getElementById('prRowFree').style.display=isPro?'none':'flex';
+  document.getElementById('prRowPro').style.display=isPro?'flex':'none';
+  document.getElementById('prRowCancel').style.display=isPro?'flex':'none';
+}
 
-// ══════════════════════════════════════════════════
 // FILE HANDLING
-// ══════════════════════════════════════════════════
-let allRows=[],filtered=[],headers=[],visibleCols=[];
-let curPage=1,sortCol=-1,sortAsc=true;
+let allRows=[],filtered=[],headers=[],visibleCols=[],curPage=1,sortCol=-1,sortAsc=true;
 const PER=50;
 const NAF={'87.10A':{label:'EHPAD',cls:'tag-87-10A'},'87.10B':{label:'USLD',cls:'tag-87-10B'},'88.99B':{label:'IME/MAS',cls:'tag-88-99B'},'87.20A':{label:'SAAD',cls:'tag-87-20A'},'88.10A':{label:'SSIAD',cls:'tag-88-10A'}};
-
-const dz=document.getElementById('dropzone');
-const fi=document.getElementById('fileInput');
+const dz=document.getElementById('dropzone'),fi=document.getElementById('fileInput');
 dz.addEventListener('click',()=>fi.click());
 dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('over');});
 dz.addEventListener('dragleave',()=>dz.classList.remove('over'));
 dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('over');if(e.dataTransfer.files[0])load(e.dataTransfer.files[0]);});
 fi.addEventListener('change',e=>{if(e.target.files[0])load(e.target.files[0]);});
-
 function load(file){const r=new FileReader();r.onload=e=>parseCSV(e.target.result,file);r.readAsText(file,'utf-8');}
-
 function parseCSV(text,file){
   text=text.replace(/\r\n/g,'\n').replace(/\r/g,'\n');
   const rows=[];let row=[],field='',inQ=false;
-  for(let i=0;i<text.length;i++){
-    const c=text[i];
-    if(c==='"'){if(inQ&&text[i+1]==='"'){field+='"';i++;}else inQ=!inQ;}
-    else if(c===','&&!inQ){row.push(field.trim());field='';}
-    else if(c==='\n'&&!inQ){row.push(field.trim());field='';if(row.some(f=>f))rows.push(row);row=[];}
-    else field+=c;
-  }
+  for(let i=0;i<text.length;i++){const c=text[i];if(c==='"'){if(inQ&&text[i+1]==='"'){field+='"';i++;}else inQ=!inQ;}else if(c===','&&!inQ){row.push(field.trim());field='';}else if(c==='\n'&&!inQ){row.push(field.trim());field='';if(row.some(f=>f))rows.push(row);row=[];}else field+=c;}
   if(field||row.length>1){row.push(field.trim());if(row.some(f=>f))rows.push(row);}
   if(rows.length<2){toast('Fichier vide ou invalide','error');return;}
   headers=rows[0].map(h=>h.replace(/^"|"$/g,'').trim());
@@ -828,10 +903,8 @@ function parseCSV(text,file){
   applyFilters();
   toast(tr('toastLoaded',allRows.length),'success');
 }
-
 function resetApp(){
-  allRows=[];filtered=[];headers=[];visibleCols=[];
-  curPage=1;sortCol=-1;sortAsc=true;
+  allRows=[];filtered=[];headers=[];visibleCols=[];curPage=1;sortCol=-1;sortAsc=true;
   document.getElementById('dzWrap').style.display='flex';
   document.getElementById('workspace').classList.remove('on');
   document.getElementById('btnNewFile').classList.remove('show');
@@ -840,21 +913,12 @@ function resetApp(){
   ['globalSearch','citySearch','col3Search'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('emailOnly').checked=false;
 }
-
-document.getElementById('globalSearch').addEventListener('input',()=>{curPage=1;applyFilters();});
-document.getElementById('citySearch').addEventListener('input',()=>{curPage=1;applyFilters();});
-document.getElementById('col3Search').addEventListener('input',()=>{curPage=1;applyFilters();});
+['globalSearch','citySearch','col3Search'].forEach(id=>document.getElementById(id).addEventListener('input',()=>{curPage=1;applyFilters();}));
 document.getElementById('emailOnly').addEventListener('change',()=>{curPage=1;applyFilters();});
-
 function applyFilters(){
-  const g=document.getElementById('globalSearch').value.trim().toLowerCase();
-  const cq=document.getElementById('citySearch').value.trim().toLowerCase();
-  const c3=document.getElementById('col3Search').value.trim().toLowerCase();
-  const eo=document.getElementById('emailOnly').checked;
+  const g=document.getElementById('globalSearch').value.trim().toLowerCase(),cq=document.getElementById('citySearch').value.trim().toLowerCase(),c3=document.getElementById('col3Search').value.trim().toLowerCase(),eo=document.getElementById('emailOnly').checked;
   const cities=cq?cq.split(',').map(x=>x.trim()).filter(Boolean):[];
-  const cityCol=headers.find(h=>/commune|ville|city|ciudad/i.test(h))||headers[6];
-  const emailCol=headers.find(h=>/email|mail/i.test(h));
-  const col3=headers[2]||'';
+  const cityCol=headers.find(h=>/commune|ville|city|ciudad/i.test(h))||headers[6],emailCol=headers.find(h=>/email|mail/i.test(h)),col3=headers[2]||'';
   filtered=allRows.filter(row=>{
     if(g&&!Object.values(row).some(v=>v.toLowerCase().includes(g)))return false;
     if(cities.length){const v=(row[cityCol]||'').toLowerCase();if(!cities.some(c=>v.includes(c)))return false;}
@@ -876,19 +940,14 @@ function renderChips(g,cities,c3,eo){
   if(eo)addChip(wrap,tr('emailOnly'),()=>{document.getElementById('emailOnly').checked=false;applyFilters();});
 }
 function addChip(p,label,onClick){const c=document.createElement('div');c.className='chip';c.textContent=label+' ✕';c.onclick=onClick;p.appendChild(c);}
-
 function renderTable(){
   const cols=headers.filter(h=>visibleCols.includes(h));
   document.getElementById('tHead').innerHTML='<tr>'+cols.map(h=>{const idx=headers.indexOf(h);const arr=sortCol===idx?(sortAsc?' ↑':' ↓'):'';return`<th class="${sortCol===idx?'sorted':''}" onclick="sortBy(${idx})">${h}${arr}</th>`;}).join('')+'</tr>';
   const start=(curPage-1)*PER,page=filtered.slice(start,start+PER);
-  const emailCol=headers.find(h=>/email|mail/i.test(h));
-  const nafCol=headers.find(h=>/naf|secteur/i.test(h));
-  const siteCol=headers.find(h=>/site|web|url/i.test(h));
-  const nameCol=headers.find(h=>/denomination|nom|name|nombre/i.test(h))||headers[0];
+  const emailCol=headers.find(h=>/email|mail/i.test(h)),nafCol=headers.find(h=>/naf|secteur/i.test(h)),siteCol=headers.find(h=>/site|web|url/i.test(h)),nameCol=headers.find(h=>/denomination|nom|name|nombre/i.test(h))||headers[0];
   if(!page.length){document.getElementById('tBody').innerHTML=`<tr><td colspan="${cols.length}"><div class="empty-state"><p>—</p><p>${tr('noResults')}</p></div></td></tr>`;return;}
   document.getElementById('tBody').innerHTML=page.map(row=>{
-    const cells=cols.map(h=>{
-      const v=row[h]||'';
+    const cells=cols.map(h=>{const v=row[h]||'';
       if(h===emailCol&&v){const emails=v.split('|').map(e=>e.trim()).filter(Boolean);return`<td class="td-email">${emails.map(e=>`<a href="mailto:${e}">${e}</a>`).join('<br>')}</td>`;}
       if(h===nafCol&&v){const n=NAF[v];return n?`<td><span class="tag ${n.cls}">${n.label}</span></td>`:`<td><span class="tag tag-other">${v}</span></td>`;}
       if(h===siteCol&&v)return`<td class="td-site"><a href="${v}" target="_blank">site</a></td>`;
@@ -899,160 +958,80 @@ function renderTable(){
   }).join('');
 }
 function sortBy(idx){if(sortCol===idx)sortAsc=!sortAsc;else{sortCol=idx;sortAsc=true;}curPage=1;applyFilters();}
-
 function renderPagination(){
   const total=Math.ceil(filtered.length/PER),pag=document.getElementById('pagination');
   if(total<=1){pag.innerHTML='';return;}
   let h=`<button class="pg-btn" onclick="goPage(${curPage-1})" ${curPage===1?'disabled':''}>←</button>`;
-  for(let i=1;i<=total;i++){
-    if(i===1||i===total||Math.abs(i-curPage)<=1)h+=`<button class="pg-btn ${i===curPage?'active':''}" onclick="goPage(${i})">${i}</button>`;
-    else if(Math.abs(i-curPage)===2)h+=`<span class="pg-sep">…</span>`;
-  }
+  for(let i=1;i<=total;i++){if(i===1||i===total||Math.abs(i-curPage)<=1)h+=`<button class="pg-btn ${i===curPage?'active':''}" onclick="goPage(${i})">${i}</button>`;else if(Math.abs(i-curPage)===2)h+=`<span class="pg-sep">…</span>`;}
   h+=`<button class="pg-btn" onclick="goPage(${curPage+1})" ${curPage===total?'disabled':''}>→</button>`;
   pag.innerHTML=h;
 }
 function goPage(p){const t=Math.ceil(filtered.length/PER);if(p<1||p>t)return;curPage=p;renderTable();renderPagination();window.scrollTo({top:0,behavior:'smooth'});}
-
 function buildColPicker(){document.getElementById('colDropdown').innerHTML=headers.map(h=>`<label class="col-item"><input type="checkbox" ${visibleCols.includes(h)?'checked':''} onchange="toggleCol('${h}',this.checked)">${h}</label>`).join('');}
 function toggleCol(h,on){if(on){if(!visibleCols.includes(h))visibleCols.push(h);}else{visibleCols=visibleCols.filter(c=>c!==h);}renderTable();}
 function toggleCols(){document.getElementById('colDropdown').classList.toggle('open');}
 document.addEventListener('click',e=>{if(!e.target.closest('.col-wrap'))document.getElementById('colDropdown').classList.remove('open');});
-
 document.getElementById('btnCSV').addEventListener('click',exportCSV);
 function exportCSV(){
   if(!filtered.length)return;
   if(!isPro){openPro();return;}
-  const cols=[...headers];
-  const lines=[cols.map(h=>'"'+h+'"').join(',')];
+  const cols=[...headers],lines=[cols.map(h=>'"'+h+'"').join(',')];
   filtered.forEach(row=>lines.push(cols.map(h=>'"'+(row[h]||'').replace(/"/g,'""')+'"').join(',')));
-  const blob=new Blob(['\uFEFF'+lines.join('\n')],{type:'text/csv;charset=utf-8;'});
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement('a');
-  a.href=url;a.download='csvfilter-'+new Date().toISOString().slice(0,10)+'.csv';
-  a.style.display='none';document.body.appendChild(a);
+  const blob=new Blob(['\uFEFF'+lines.join('\n')],{type:'text/csv;charset=utf-8;'}),url=URL.createObjectURL(blob),a=document.createElement('a');
+  a.href=url;a.download='csvfilter-'+new Date().toISOString().slice(0,10)+'.csv';a.style.display='none';document.body.appendChild(a);
   setTimeout(()=>{a.click();setTimeout(()=>{document.body.removeChild(a);URL.revokeObjectURL(url);},300);},100);
   toast(tr('toastCSV'),'success');
 }
-
 document.getElementById('btnPDF').addEventListener('click',exportPDF);
 function exportPDF(){
   if(!filtered.length)return;
   if(!isPro){openPro();return;}
   if(typeof window.jspdf==='undefined'){toast('Librairie PDF en chargement…','error');return;}
-  const{jsPDF}=window.jspdf;
-  const doc=new jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
-  const cols=[...headers];
-  const rows=filtered.slice(0,500).map(row=>cols.map(h=>(row[h]||'').substring(0,60)));
-  doc.setFillColor(255,255,255);doc.rect(0,0,297,210,'F');
-  doc.setFillColor(0,100,80);doc.rect(0,0,297,22,'F');
-  doc.setTextColor(255,255,255);doc.setFontSize(13);doc.setFont('helvetica','bold');
-  doc.text('CSV Filter.io',14,10);
-  doc.setFont('helvetica','normal');doc.setFontSize(8);
-  doc.text(tr('pdfTitle')+' · '+new Date().toLocaleDateString()+' · '+filtered.length+' lignes',14,17);
-  doc.autoTable({head:[cols],body:rows,startY:26,theme:'grid',
-    styles:{font:'helvetica',fontSize:6.5,textColor:[20,30,50],fillColor:[255,255,255],lineColor:[200,210,225],lineWidth:.2,overflow:'linebreak',cellPadding:2},
-    headStyles:{fillColor:[0,100,80],textColor:[255,255,255],fontStyle:'bold',fontSize:7},
-    alternateRowStyles:{fillColor:[245,248,252]},margin:{left:10,right:10}});
+  const{jsPDF}=window.jspdf,doc=new jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
+  const cols=[...headers],rows=filtered.slice(0,500).map(row=>cols.map(h=>(row[h]||'').substring(0,60)));
+  doc.setFillColor(255,255,255);doc.rect(0,0,297,210,'F');doc.setFillColor(0,100,80);doc.rect(0,0,297,22,'F');
+  doc.setTextColor(255,255,255);doc.setFontSize(13);doc.setFont('helvetica','bold');doc.text('CSV Filter.io',14,10);
+  doc.setFont('helvetica','normal');doc.setFontSize(8);doc.text(tr('pdfTitle')+' · '+new Date().toLocaleDateString()+' · '+filtered.length+' lignes',14,17);
+  doc.autoTable({head:[cols],body:rows,startY:26,theme:'grid',styles:{font:'helvetica',fontSize:6.5,textColor:[20,30,50],fillColor:[255,255,255],lineColor:[200,210,225],lineWidth:.2,overflow:'linebreak',cellPadding:2},headStyles:{fillColor:[0,100,80],textColor:[255,255,255],fontStyle:'bold',fontSize:7},alternateRowStyles:{fillColor:[245,248,252]},margin:{left:10,right:10}});
   doc.save('csvfilter-'+new Date().toISOString().slice(0,10)+'.pdf');
   toast(tr('toastPDF'),'success');
 }
-
 let toastTm;
-function toast(msg,type='success'){
-  const el=document.getElementById('toast');
-  el.textContent=msg;el.className='toast '+type+' show';
-  clearTimeout(toastTm);toastTm=setTimeout(()=>el.classList.remove('show'),3500);
-}
+function toast(msg,type='success'){const el=document.getElementById('toast');el.textContent=msg;el.className='toast '+type+' show';clearTimeout(toastTm);toastTm=setTimeout(()=>el.classList.remove('show'),3500);}
 
-// ══════════════════════════════════════════════════
 // SUPABASE AUTH
-// ══════════════════════════════════════════════════
 const SUPA_URL='https://mvitqeijzcakoqldftmp.supabase.co';
 const SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im12aXRxZWlqemNha29xbGRmdG1wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM5NTkwNzksImV4cCI6MjA4OTUzNTA3OX0.W2Lw1rtOBsAIgdtKZYIvol3xKCmAY4Wem1zpNc1hG4I';
 const sb=supabase.createClient(SUPA_URL,SUPA_KEY);
 let currentUser=null;
-
 function updateAuthUI(){
-  const si=document.getElementById('btnSignIn');
-  const bu=document.getElementById('btnUserNav');
-  const lo=document.getElementById('btnLogout');
-  const nc=document.getElementById('navCenter');
-  if(currentUser){
-    si.style.display='none';
-    bu.classList.add('show');
-    lo.classList.add('show');
-    nc.style.display='flex';
-    const email=currentUser.email||'';
-    document.getElementById('navAvatar').textContent=email[0]?.toUpperCase()||'?';
-    document.getElementById('navEmail').textContent=email.split('@')[0]||'Mon compte';
-  } else {
-    si.style.display='inline-flex';
-    bu.classList.remove('show');
-    lo.classList.remove('show');
-    nc.style.display='none';
-  }
+  const si=document.getElementById('btnSignIn'),bu=document.getElementById('btnUserNav'),lo=document.getElementById('btnLogout'),nc=document.getElementById('navCenter');
+  if(currentUser){si.style.display='none';bu.classList.add('show');lo.classList.add('show');nc.style.display='flex';const email=currentUser.email||'';document.getElementById('navAvatar').textContent=email[0]?.toUpperCase()||'?';document.getElementById('navEmail').textContent=email.split('@')[0]||'Mon compte';}
+  else{si.style.display='inline-flex';bu.classList.remove('show');lo.classList.remove('show');nc.style.display='none';}
 }
-
 async function fetchProStatus(){
   if(!currentUser)return;
   try{
     const{data}=await sb.from('profiles').select('is_pro,stripe_customer_id').eq('id',currentUser.id).single();
-    if(data?.is_pro){
-      isPro=true;
-      updateProBtn();
-      if(allRows.length)applyFilters();
-    } else {
-      isPro=false;
-      updateProBtn();
-    }
-  }catch(e){
-    // Profil pas encore créé, isPro reste false
-    isPro=false;
+    isPro=data?.is_pro===true;
     updateProBtn();
-  }
-}
-
-sb.auth.onAuthStateChange((event,session)=>{
-  currentUser=session?.user??null;
-  updateAuthUI();
-  if(event==='SIGNED_IN'){
-    closeAuth();
-    toast('Connecté — bienvenue !','success');
-    fetchProStatus();
-    if(document.getElementById('proOverlay').classList.contains('open'))syncProModal();
-    document.getElementById('proAuthMsg').textContent='';
-  }
-  if(event==='SIGNED_OUT'){
-    isPro=false;
-    updateProBtn();
-    showPage('app');
     if(allRows.length)applyFilters();
-  }
+  }catch(e){isPro=false;updateProBtn();}
+}
+sb.auth.onAuthStateChange((event,session)=>{
+  currentUser=session?.user??null;updateAuthUI();
+  if(event==='SIGNED_IN'){closeAuth();toast('Connecté — bienvenue !','success');fetchProStatus();if(document.getElementById('proOverlay').classList.contains('open'))syncProModal();document.getElementById('proAuthMsg').textContent='';}
+  if(event==='SIGNED_OUT'){isPro=false;updateProBtn();showPage('app');if(allRows.length)applyFilters();}
 });
-
 (async()=>{
   const{data}=await sb.auth.getSession();
-  currentUser=data.session?.user??null;
-  updateAuthUI();
+  currentUser=data.session?.user??null;updateAuthUI();
   if(currentUser)await fetchProStatus();
-  if(window.location.hash?.includes('access_token')||window.location.search?.includes('code='))
-    window.history.replaceState(null,'',window.location.pathname);
-  // Succès paiement Stripe
-  if(window.location.search?.includes('session_id=')){
-    toast('Paiement réussi ! Activation en cours…','success');
-    window.history.replaceState(null,'',window.location.pathname);
-    setTimeout(async()=>{if(currentUser)await fetchProStatus();},3000);
-  }
+  if(window.location.hash?.includes('access_token')||window.location.search?.includes('code='))window.history.replaceState(null,'',window.location.pathname);
+  if(window.location.search?.includes('session_id=')){toast('Paiement réussi ! Activation en cours…','success');window.history.replaceState(null,'',window.location.pathname);setTimeout(async()=>{if(currentUser)await fetchProStatus();},3000);}
 })();
-
-// AUTH MODAL
 let authMode='login';
-function openAuth(mode='login'){
-  authMode=mode;switchTab(mode);
-  document.getElementById('authOverlay').classList.add('open');
-  document.getElementById('authMsg').textContent='';
-  setTimeout(()=>document.getElementById('authEmail').focus(),100);
-}
+function openAuth(mode='login'){authMode=mode;switchTab(mode);document.getElementById('authOverlay').classList.add('open');document.getElementById('authMsg').textContent='';setTimeout(()=>document.getElementById('authEmail').focus(),100);}
 function closeAuth(){document.getElementById('authOverlay').classList.remove('open');}
 function switchTab(mode){
   authMode=mode;
@@ -1064,51 +1043,25 @@ function switchTab(mode){
   document.getElementById('authPassword').autocomplete=mode==='login'?'current-password':'new-password';
 }
 async function handleAuthSubmit(){
-  const email=document.getElementById('authEmail').value.trim();
-  const pwd=document.getElementById('authPassword').value;
-  const confirm=document.getElementById('authConfirm').value;
-  const btn=document.getElementById('btnAuthSubmit');
+  const email=document.getElementById('authEmail').value.trim(),pwd=document.getElementById('authPassword').value,confirm=document.getElementById('authConfirm').value,btn=document.getElementById('btnAuthSubmit');
   if(!email||!pwd){setAuthMsg('Veuillez remplir tous les champs.','error');return;}
-  if(authMode==='register'){
-    if(pwd.length<6){setAuthMsg('Mot de passe trop court (6 caractères min).','error');return;}
-    if(pwd!==confirm){setAuthMsg('Les mots de passe ne correspondent pas.','error');return;}
-  }
+  if(authMode==='register'){if(pwd.length<6){setAuthMsg('Mot de passe trop court (6 caractères min).','error');return;}if(pwd!==confirm){setAuthMsg('Les mots de passe ne correspondent pas.','error');return;}}
   btn.disabled=true;btn.textContent='…';
-  if(authMode==='login'){
-    const{error}=await sb.auth.signInWithPassword({email,password:pwd});
-    if(error){setAuthMsg('Email ou mot de passe incorrect.','error');btn.disabled=false;btn.textContent=tr('loginBtn');}
-  } else {
-    const{error}=await sb.auth.signUp({email,password:pwd});
-    if(error){setAuthMsg(error.message||'Erreur.','error');btn.disabled=false;btn.textContent=tr('createBtn');}
-    else{setAuthMsg('Compte créé ! Vérifiez votre email pour confirmer.','success');btn.disabled=false;btn.textContent=tr('createBtn');}
-  }
+  if(authMode==='login'){const{error}=await sb.auth.signInWithPassword({email,password:pwd});if(error){setAuthMsg('Email ou mot de passe incorrect.','error');btn.disabled=false;btn.textContent=tr('loginBtn');}}
+  else{const{error}=await sb.auth.signUp({email,password:pwd});if(error){setAuthMsg(error.message||'Erreur.','error');btn.disabled=false;btn.textContent=tr('createBtn');}else{setAuthMsg('Compte créé ! Vérifiez votre email.','success');btn.disabled=false;btn.textContent=tr('createBtn');}}
 }
-async function signInWithGoogle(){
-  const{error}=await sb.auth.signInWithOAuth({
-    provider:'google',
-    options:{redirectTo:'https://csvfilter.site',queryParams:{prompt:'select_account'}}
-  });
-  if(error)setAuthMsg('Erreur Google : '+error.message,'error');
-}
-async function handleSignOut(){
-  await sb.auth.signOut();
-  toast('Déconnecté','success');
-}
+async function signInWithGoogle(){const{error}=await sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:'https://csvfilter.site',queryParams:{prompt:'select_account'}}});if(error)setAuthMsg('Erreur Google : '+error.message,'error');}
+async function handleSignOut(){await sb.auth.signOut();toast('Déconnecté','success');}
 function setAuthMsg(text,type){const el=document.getElementById('authMsg');el.textContent=text;el.className='auth-msg '+type;}
-
 async function proSignIn(){
-  const email=document.getElementById('proEmail').value.trim();
-  const pwd=document.getElementById('proPassword').value;
-  const msg=document.getElementById('proAuthMsg');
+  const email=document.getElementById('proEmail').value.trim(),pwd=document.getElementById('proPassword').value,msg=document.getElementById('proAuthMsg');
   if(!email||!pwd){msg.textContent='Remplissez email et mot de passe.';msg.style.color='var(--accent3)';return;}
   msg.textContent='…';msg.style.color='var(--text2)';
   const{error}=await sb.auth.signInWithPassword({email,password:pwd});
   if(error){msg.textContent='Email ou mot de passe incorrect.';msg.style.color='var(--accent3)';}
 }
 async function proSignUp(){
-  const email=document.getElementById('proEmail').value.trim();
-  const pwd=document.getElementById('proPassword').value;
-  const msg=document.getElementById('proAuthMsg');
+  const email=document.getElementById('proEmail').value.trim(),pwd=document.getElementById('proPassword').value,msg=document.getElementById('proAuthMsg');
   if(!email||!pwd){msg.textContent='Remplissez email et mot de passe.';msg.style.color='var(--accent3)';return;}
   if(pwd.length<6){msg.textContent='Mot de passe trop court (6 min).';msg.style.color='var(--accent3)';return;}
   msg.textContent='…';msg.style.color='var(--text2)';
@@ -1117,9 +1070,7 @@ async function proSignUp(){
   else{msg.textContent='Compte créé ! Vérifiez votre email.';msg.style.color='var(--accent)';}
 }
 
-// ══════════════════════════════════════════════════
 // INIT
-// ══════════════════════════════════════════════════
 setLang('fr');
 </script>
 </body>
