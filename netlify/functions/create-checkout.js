@@ -11,7 +11,7 @@ exports.handler = async (event) => {
       mode: "subscription",
       payment_method_types: ["card"],
       customer_email: email,
-      line_items: [{ price: "price_1TEp6LLrCcYxw7KZhVYq3hFq", quantity: 1 }],
+      line_items: [{ price: "price_1TESlGLrCcYxw7KZ6g4HIYat", quantity: 1 }],
 success_url: `${process.env.URL}/?session_id={CHECKOUT_SESSION_ID}`,      cancel_url: `${process.env.URL}/`,
       metadata: { supabase_user_id: userId },
     });
