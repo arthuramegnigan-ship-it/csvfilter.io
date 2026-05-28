@@ -1092,8 +1092,7 @@ async function handleAuthSubmit(){
   if(authMode==='login'){const{error}=await sb.auth.signInWithPassword({email,password:pwd});if(error){setAuthMsg('Email ou mot de passe incorrect.','error');btn.disabled=false;btn.textContent=tr('loginBtn');}}
   else{const{error}=await sb.auth.signUp({email,password:pwd});if(error){setAuthMsg(error.message||'Erreur.','error');btn.disabled=false;btn.textContent=tr('createBtn');}else{setAuthMsg('Compte créé ! Vérifiez votre email.','success');btn.disabled=false;btn.textContent=tr('createBtn');}}
 }
-async function signInWithGoogle(){const{error}=await sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:'https://csvfilter.site',queryParams:{prompt:'select_account'}}});if(error)setAuthMsg('Erreur Google : '+error.message,'error');}
-async function handleSignOut(){await sb.auth.signOut();toast('Déconnecté','success');}
+async function signInWithGoogle(){const{error}=await sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:'https://csvfilter.site',flowType:'pkce',queryParams:{prompt:'select_account'}}});if(error)setAuthMsg('Erreur Google : '+error.message,'error');}async function handleSignOut(){await sb.auth.signOut();toast('Déconnecté','success');}
 function setAuthMsg(text,type){const el=document.getElementById('authMsg');el.textContent=text;el.className='auth-msg '+type;}
 async function proSignIn(){
   const email=document.getElementById('proEmail').value.trim(),pwd=document.getElementById('proPassword').value,msg=document.getElementById('proAuthMsg');
