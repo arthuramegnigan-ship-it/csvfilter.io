@@ -1070,8 +1070,7 @@ sb.auth.onAuthStateChange((event,session)=>{
   const{data}=await sb.auth.getSession();
   currentUser=data.session?.user??null;updateAuthUI();
   if(currentUser)await fetchProStatus();
-  if(window.location.hash?.includes('access_token')||window.location.search?.includes('code='))window.history.replaceState(null,'',window.location.pathname);
-  if(window.location.search?.includes('session_id=')){toast('Paiement réussi ! Activation en cours…','success');window.history.replaceState(null,'',window.location.pathname);setTimeout(async()=>{if(currentUser)await fetchProStatus();},3000);}
+if(window.location.hash?.includes('access_token')||window.location.search?.includes('code=')){await sb.auth.getSession();window.history.replaceState(null,'',window.location.pathname);}  if(window.location.search?.includes('session_id=')){toast('Paiement réussi ! Activation en cours…','success');window.history.replaceState(null,'',window.location.pathname);setTimeout(async()=>{if(currentUser)await fetchProStatus();},3000);}
 })();
 let authMode='login';
 function openAuth(mode='login'){authMode=mode;switchTab(mode);document.getElementById('authOverlay').classList.add('open');document.getElementById('authMsg').textContent='';setTimeout(()=>document.getElementById('authEmail').focus(),100);}
