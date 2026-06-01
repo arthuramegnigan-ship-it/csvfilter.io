@@ -412,38 +412,38 @@ body.light .modal{background:#fff}
       <div class="profile-hero-info">
         <h2 id="phName">—</h2>
         <p id="phEmail">—</p>
-        <div class="profile-hero-badge" id="phBadge"><span class="badge-free">Plan gratuit</span></div>
+        <div class="profile-hero-badge" id="phBadge"><span class="badge-free">Free plan</span></div>
       </div>
     </div>
     <div class="profile-card">
-      <div class="profile-card-header"><h3>Abonnement</h3></div>
+      <div class="profile-card-header"><h3>Subscription</h3></div>
       <div class="profile-card-body">
         <div class="profile-row" id="prRowFree">
-          <div><div class="profile-row-label">Plan actuel</div><div class="profile-row-sub">Limité à 200 lignes par fichier</div></div>
-          <button class="btn-action gold" onclick="openPro()">Passer Pro →</button>
+          <div><div class="profile-row-label">Current plan</div><div class="profile-row-sub">Limited to 200 rows per file</div></div>
+          <button class="btn-action gold" onclick="openPro()">Go Pro →</button>
         </div>
         <div class="profile-row" id="prRowPro" style="display:none">
-          <div><div class="profile-row-label">Pro actif</div><div class="profile-row-sub" id="prExpiry">—</div></div>
+          <div><div class="profile-row-label">Pro active</div><div class="profile-row-sub" id="prExpiry">—</div></div>
           <span style="color:var(--accent);font-size:20px">✓</span>
         </div>
         <div class="profile-row" id="prRowCancel" style="display:none">
-          <div><div class="profile-row-label">Gérer l'abonnement</div><div class="profile-row-sub">Modifier ou résilier via Stripe</div></div>
-          <button class="btn-action danger" onclick="openCustomerPortal()">Gérer →</button>
+          <div><div class="profile-row-label">Manage subscription</div><div class="profile-row-sub">Edit or cancel via Stripe</div></div>
+          <button class="btn-action danger" onclick="openCustomerPortal()">Manage →</button>
         </div>
       </div>
     </div>
     <div class="profile-card">
       <div class="profile-card-header">
-        <h3>Sécurité</h3>
-        <button class="btn-action" id="pwdToggleBtn" onclick="togglePwdForm()">Changer le mot de passe</button>
+        <h3>Security</h3>
+        <button class="btn-action" id="pwdToggleBtn" onclick="togglePwdForm()">Change password</button>
       </div>
       <div id="pwdFormContainer" style="display:none">
         <div class="inline-form">
-          <input type="password" id="newPwd" placeholder="Nouveau mot de passe (min. 6 caractères)" autocomplete="new-password">
-          <input type="password" id="confirmPwd" placeholder="Confirmer le mot de passe" autocomplete="new-password">
+          <input type="password" id="newPwd" placeholder="New password (min. 6 characters)" autocomplete="new-password">
+          <input type="password" id="confirmPwd" placeholder="Confirm password" autocomplete="new-password">
           <div class="inline-form-row">
-            <button class="btn-form-submit" id="pwdSubmitBtn" onclick="changePassword()">Mettre à jour</button>
-            <button class="btn-form-cancel" onclick="togglePwdForm()">Annuler</button>
+            <button class="btn-form-submit" id="pwdSubmitBtn" onclick="changePassword()">Update</button>
+            <button class="btn-form-cancel" onclick="togglePwdForm()">Cancel</button>
           </div>
           <div class="form-msg" id="pwdMsg"></div>
         </div>
@@ -453,21 +453,19 @@ body.light .modal{background:#fff}
       <div class="profile-card-header"><h3>Support</h3></div>
       <div class="profile-card-body">
         <div class="profile-row">
-          <div><div class="profile-row-label">Contacter l'équipe</div><div class="profile-row-sub">arthurbusi.contact@gmail.com</div></div>
-          <a class="btn-action" href="mailto:arthurbusi.contact@gmail.com">Écrire →</a>
+          <div><div class="profile-row-label">Contact us</div><div class="profile-row-sub">arthurbusi.contact@gmail.com</div></div>
+          <a class="btn-action" href="mailto:arthurbusi.contact@gmail.com">Write →</a>
         </div>
         <div class="profile-row">
-          <div><div class="profile-row-label">Documentation</div><div class="profile-row-sub">Guides et tutoriels</div></div>
-          <button class="btn-action" onclick="openGuide()">Aide →</button>
+          <div><div class="profile-row-label">Documentation</div><div class="profile-row-sub">Guides & tutorials</div></div>
+          <button class="btn-action" onclick="openGuide()">Help →</button>
         </div>
       </div>
     </div>
-    <button class="profile-logout-btn" onclick="handleSignOut()">→ Se déconnecter</button>
+    <button class="profile-logout-btn" onclick="handleSignOut()">→ Sign out</button>
   </div>
 </div>
-
 </div><!-- /app -->
-
 <div class="toast" id="toast"></div>
 
 <!-- AUTH MODAL -->
