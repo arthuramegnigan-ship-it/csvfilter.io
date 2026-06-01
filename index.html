@@ -333,7 +333,7 @@ body.light .modal{background:#fff}
   <div class="logo-text" onclick="showPage('app')">CSV Filter<span>.io</span></div>
   <div class="topbar-center" id="navCenter" style="display:none">
     <button class="nav-btn active" id="navApp" onclick="showPage('app')">Application</button>
-    <button class="nav-btn" id="navProfile" onclick="showPage('profile')">Mon profil</button>
+<button class="nav-btn" id="navProfile" onclick="showPage('profile')">My profile</button>
   </div>
   <div class="topbar-right">
     <button class="btn-pro" id="btnPro" onclick="openPro()">Pro 4,99€/mois</button>
@@ -903,8 +903,7 @@ function refreshProfilePage(){
   document.getElementById('phAvatar').textContent=email[0]?.toUpperCase()||'?';
   document.getElementById('phName').textContent=email.split('@')[0]||'—';
   document.getElementById('phEmail').textContent=email;
-  document.getElementById('phBadge').innerHTML=isPro?'<span class="badge-pro">✓ Pro actif</span>':'<span class="badge-free">Plan gratuit</span>';
-  document.getElementById('prRowFree').style.display=isPro?'none':'flex';
+document.getElementById('phBadge').innerHTML=isPro?'<span class="badge-pro">✓ Pro active</span>':'<span class="badge-free">Free plan</span>';  document.getElementById('prRowFree').style.display=isPro?'none':'flex';
   document.getElementById('prRowPro').style.display=isPro?'flex':'none';
   document.getElementById('prRowCancel').style.display=isPro?'flex':'none';
 }
