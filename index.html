@@ -992,7 +992,7 @@ function parseCSV(text,file){
   applyFilters();
   toast(tr('toastLoaded',allRows.length),'success');
 }
-function resetApp(){
+function resetApp(){document.getElementById('seoBlock').style.display='block';
   allRows=[];filtered=[];headers=[];visibleCols=[];curPage=1;sortCol=-1;sortAsc=true;
   document.getElementById('dzWrap').style.display='flex';
   document.getElementById('workspace').classList.remove('on');
