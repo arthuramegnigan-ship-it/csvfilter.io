@@ -969,6 +969,7 @@ dz.addEventListener('dragleave',()=>dz.classList.remove('over'));
 dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('over');if(e.dataTransfer.files[0])load(e.dataTransfer.files[0]);});
 fi.addEventListener('change',e=>{if(e.target.files[0])load(e.target.files[0]);});
 function load(file){const r=new FileReader();r.onload=e=>parseCSV(e.target.result,file);r.readAsText(file,'utf-8');}
+  document.getElementById('seoBlock').style.display='none';
 function parseCSV(text,file){
   text=text.replace(/\r\n/g,'\n').replace(/\r/g,'\n');
   const rows=[];let row=[],field='',inQ=false;
