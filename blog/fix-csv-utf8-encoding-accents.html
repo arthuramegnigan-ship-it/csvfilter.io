@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fix UTF-8 Encoding &amp; Broken Accents in CSV Files | CSVFilter.io</title>
+<meta name="description" content="Seeing Ã© instead of é in your CSV? That's an encoding mismatch. Learn why accents break in CSV files and how to fix UTF-8 issues in Excel, Sheets and your browser.">
+<link rel="canonical" href="https://csvfilter.site/blog/fix-csv-utf8-encoding-accents.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="How to Fix UTF-8 Encoding and Broken Accents in CSV Files">
+<meta property="og:description" content="Why accents break in CSV files and how to fix encoding issues for good.">
+<meta property="og:url" content="https://csvfilter.site/blog/fix-csv-utf8-encoding-accents.html">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<style>@import url('https://fonts.googleapis.com/css2?family=Clash+Display:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');</style>
+<link rel="stylesheet" href="/blog/blog.css">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Article","headline":"How to Fix UTF-8 Encoding and Broken Accents in CSV Files","description":"Why accents break in CSV files and how to fix UTF-8 encoding issues in Excel, Google Sheets and the browser.","author":{"@type":"Person","name":"Arthur Busi"},"publisher":{"@type":"Organization","name":"CSVFilter.io"},"datePublished":"2026-06-17","mainEntityOfPage":"https://csvfilter.site/blog/fix-csv-utf8-encoding-accents.html"}
+</script>
+</head>
+<body>
+<div class="wrap">
+
+<header class="site-header">
+  <div class="header-inner">
+    <a href="/" class="logo">CSVFilter<span>.io</span></a>
+    <nav class="header-nav">
+      <a href="/blog/">Blog</a>
+      <a href="/blog/about.html" class="hide-mobile">About</a>
+      <a href="/" class="btn-tool">Open the tool →</a>
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">🌙</button>
+    </nav>
+  </div>
+</header>
+
+<main class="container">
+  <div class="breadcrumb"><a href="/">Home</a> › <a href="/blog/">Blog</a> › <span>Fix CSV encoding</span></div>
+
+  <article>
+    <h1>How to Fix UTF-8 Encoding and Broken Accents in CSV Files</h1>
+    <div class="article-meta">Troubleshooting · 6 min read</div>
+
+    <p class="lead">You open a CSV and the names look wrong: <code>Müller</code> shows up as <code>MÃ¼ller</code>, <code>café</code> becomes <code>cafÃ©</code>, and every accented letter has turned into a little cluster of symbols. Nothing is actually broken in your data — it's a character-encoding mismatch, and once you understand it, it's quick to fix.</p>
+
+    <h2>Why accents break in CSV files</h2>
+    <p>A CSV file is just text, and text has to be saved using an <em>encoding</em> — a system that maps characters to bytes. The modern standard is <strong>UTF-8</strong>, which can represent every accented and non-Latin character. The problem appears when a file is <strong>saved in one encoding but opened as another</strong>.</p>
+    <p>The classic case: a file is saved as UTF-8, but Excel on Windows assumes the older Windows-1252 (ANSI) encoding when it opens it. The accented characters get reinterpreted byte-for-byte, and you get the familiar garble — often called <em>mojibake</em>.</p>
+    <blockquote>If <code>é</code> turns into <code>Ã©</code>, you're almost always looking at a UTF-8 file being read as Windows-1252.</blockquote>
+
+    <h2>How to fix it in Excel</h2>
+    <p>Don't double-click the file. Import it and tell Excel the encoding instead:</p>
+    <ol>
+      <li>Open a blank workbook.</li>
+      <li>Go to <strong>Data → From Text/CSV</strong>.</li>
+      <li>Select your file. In the preview dialog, set <strong>File Origin</strong> to <strong>65001: Unicode (UTF-8)</strong>.</li>
+      <li>Confirm the delimiter looks right, then load.</li>
+    </ol>
+    <p>When you save, use <strong>CSV UTF-8 (Comma delimited)</strong> from the format list — that's the version of CSV that keeps accents intact for the next person who opens it.</p>
+
+    <h2>How to fix it in Google Sheets</h2>
+    <p>Google Sheets handles UTF-8 well by default. Use <strong>File → Import → Upload</strong>, and Sheets will usually detect the encoding correctly. When you're done, <strong>File → Download → Comma-separated values</strong> exports clean UTF-8.</p>
+
+    <h2>How to fix it in a text editor</h2>
+    <p>For a quick re-save, open the file in an editor that exposes encoding (such as VS Code or Notepad++). In VS Code, the encoding is shown in the bottom bar — click it, choose <strong>Reopen with Encoding → UTF-8</strong> to read it correctly, then <strong>Save with Encoding → UTF-8</strong> to write it back.</p>
+
+    <h2>What the byte-order mark (BOM) does</h2>
+    <p>There's one extra trick that makes UTF-8 files "just work" in Excel: a <strong>byte-order mark</strong>, a tiny invisible marker at the very start of the file that tells Excel "this is UTF-8." A UTF-8 file <em>with</em> a BOM opens with correct accents on a double-click; the same file without one may not.</p>
+    <div class="note"><strong>Good to know.</strong> When you export filtered data from CSVFilter.io, the CSV includes a UTF-8 BOM automatically — so accents survive the round trip into Excel without any of the steps above.</div>
+
+    <h2>Avoid mojibake in the first place</h2>
+    <ul>
+      <li>When a tool offers it, always choose <strong>UTF-8</strong> on export.</li>
+      <li>In Excel, save as <strong>CSV UTF-8</strong> rather than plain CSV.</li>
+      <li>Open CSVs through an <strong>import</strong> dialog where you can set the encoding, instead of double-clicking.</li>
+      <li>If you're just trying to <em>read or filter</em> a file, open it in a browser tool that defaults to UTF-8 — there's nothing to configure.</li>
+    </ul>
+
+    <div class="cta-box">
+      <h3>Open your CSV with accents intact</h3>
+      <p>CSVFilter.io reads files as UTF-8 and exports with a BOM, so <code>é</code> stays <code>é</code>.</p>
+      <a class="cta-btn" href="/">Open CSVFilter.io →</a>
+    </div>
+
+    <div class="related">
+      <h3>Keep reading</h3>
+      <div class="related-grid">
+        <a href="/blog/complete-guide-to-filtering-csv-online.html">The Complete Guide to Filtering CSV Files Online →</a>
+        <a href="/blog/filter-large-csv-without-excel.html">How to Filter a Large CSV File Without Excel →</a>
+        <a href="/blog/export-csv-to-pdf.html">How to Export a Filtered CSV to a Clean PDF →</a>
+      </div>
+    </div>
+  </article>
+</main>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div>
+      <a href="/" class="logo">CSVFilter<span>.io</span></a>
+      <p class="ftxt">Filter, search and export CSV files right in your browser. No install, processed locally.</p>
+    </div>
+    <nav class="footer-links">
+      <a href="/">Tool</a>
+      <a href="/blog/">Blog</a>
+      <a href="/blog/about.html">About</a>
+      <a href="mailto:arthurbusi.contact@gmail.com">Contact</a>
+    </nav>
+    <p class="copyright">© <span id="year">2026</span> CSVFilter.io — All rights reserved.</p>
+  </div>
+</footer>
+
+</div>
+<script src="/blog/blog.js"></script>
+</body>
+</html>
